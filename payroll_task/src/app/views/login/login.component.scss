@@ -1,0 +1,15 @@
+.container-fluid{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background:linear-gradient(45deg, rgb(129, 58, 81), rgb(111, 63, 139), rgb(62, 58, 109));
+}
+
+.form-content{
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px 30px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    width: 400px;
+}

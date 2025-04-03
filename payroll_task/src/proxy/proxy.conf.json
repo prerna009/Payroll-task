@@ -1,0 +1,7 @@
+{
+	"/api": {
+		"target": "https://testffc.nimapinfotech.com/",
+		"secure": false,
+		"changeOrigin": true
+	}
+}
