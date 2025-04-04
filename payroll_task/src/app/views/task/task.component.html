@@ -1,16 +1,67 @@
-<div class="container">
-    <div class="toolbar">
-        <button mat-raised-button color="primary">
-            Filter
-        </button>
-        
-        <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Search</mat-label>
-            <input matInput placeholder="Search">
-        </mat-form-field>
-
-        <button mat-raised-button color="primary">
-            Add Task
-        </button>
+<div class="container-fluid">
+    <div class="row align-items-center py-2 border-bottom">
+        <div class="col-md-6">
+            <label class="task-label">My Task</label>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="custom-btn" style="border-right: 1px ridge black;">
+                <span>{{ currentDate | date: 'h:mm aa' }}</span>
+            </button>
+            <button class="custom-btn">
+                <span>{{ currentDate | date: 'mediumDate'}}</span>
+            </button>
+            <span class="ms-3 fw-bold px-3">{{ username }}</span>
+            <button mat-raised-button class="logout-btn" color="primary" (click)="logout()">
+                <span>Logout</span>
+            </button>
+        </div>
     </div>
+    <div class="row align-items-center py-2 border-bottom">
+        <div class="col-md-8">
+            <button class="mat-button" mat-flat-button color="primary">Filter</button>
+        </div>
+        <div class="col-md-4">
+            <mat-form-field class="w-50">
+                <mat-label>Search</mat-label>
+                <input matInput placeholder="Search">
+            </mat-form-field>
+            <button class="mat-button" mat-flat-button color="primary">Add Task</button>
+        </div>
+    </div>
+</div>
+<div>
+    <mat-tab-group [(selectedIndex)]="selectedTab" (selectedTabChange)="onTabChange($event)">
+        <mat-tab>
+            <ng-template matTabLabel>
+                My Task
+            </ng-template>
+            <ng-template matTabContent>
+                <app-my-task></app-my-task>
+            </ng-template>
+        </mat-tab>
+        <mat-tab>
+            <ng-template matTabLabel>
+                CC
+            </ng-template>
+            <ng-template matTabContent>
+                <app-cc></app-cc>
+            </ng-template>
+        </mat-tab>
+        <mat-tab>
+            <ng-template matTabLabel>
+                Assigned By Me
+            </ng-template>
+            <ng-template matTabContent>
+                <app-assigned-by-me></app-assigned-by-me>
+            </ng-template>
+        </mat-tab>
+        <mat-tab>
+            <ng-template matTabLabel>
+                Archive List
+            </ng-template>
+            <ng-template matTabContent>
+                <app-archive-list></app-archive-list>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
 </div>

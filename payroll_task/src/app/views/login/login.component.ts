@@ -32,8 +32,9 @@ export class LoginComponent {
       next: (res:any) => {
         if (res.success === true) {
           this.toaster.success('User Login Successfully');
-          localStorage.setItem("referraltoken", res.referralToken);
-          localStorage.setItem('userDetails',res.userDetail);
+          sessionStorage.setItem("authToken", btoa(`${data.username}`+':'+`${data.password}`));
+          this.authService.setUsername(res.userDetail?.data?.Name);
+          this.authService.setUserId(res.userId);
           this.router.navigate(['/mytask']); 
         } else {
           this.toaster.error('Invalid Credentials');
@@ -43,5 +44,11 @@ export class LoginComponent {
         this.toaster.error('Something went wrong. Please try again.');
       },
     });
+  }
+
+  logout() {
+    localStorage.removeItem("referraltoken");
+    this.authService.clearUsername();
+    this.router.navigate(['/login']);
   }
 }
