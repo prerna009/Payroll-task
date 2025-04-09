@@ -7,8 +7,9 @@ import { LoginComponent } from './views/login/login.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ToastrModule } from 'ngx-toastr';
 import { ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { SharedModule } from './core/modules/shared/shared.module';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent],
@@ -19,7 +20,7 @@ import { SharedModule } from './core/modules/shared/shared.module';
     ReactiveFormsModule,
     SharedModule
   ],
-  providers: [provideAnimationsAsync(), provideHttpClient(withFetch())],
+  providers: [provideAnimationsAsync(), provideHttpClient(withFetch(),withInterceptors([authInterceptor]))],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

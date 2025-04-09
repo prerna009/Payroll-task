@@ -6,19 +6,14 @@ import { tap } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const toastrService = inject(ToastrService);
-  const token = localStorage.getItem('referraltoken');
+  const token = sessionStorage.getItem('authToken');
   if(token){
     req = req.clone({
-      url: `${environment.baseUrl}${req.url}`,
-					setHeaders: {
-						Authorization: `Bearer ${token}`
-			}
-    });
-  } else {
-    req = req.clone({
-      url: `${environment.baseUrl}${req.url}`
-    });
-  }
+      setHeaders: {
+        Authorization: `Basic ${token}`
+      }
+    })
+  } 
   return next(req).pipe(
     tap((err: any) => {
       if(err.error){

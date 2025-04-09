@@ -19,9 +19,6 @@ export class TaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.username = this.authService.getUsername();
-    this.authService.userId$.subscribe((id) => {
-      console.log('Current user ID:', id);
-    });
   }
 
   onTabChange(event: MatTabChangeEvent): void {
