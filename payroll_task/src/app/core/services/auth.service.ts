@@ -32,7 +32,7 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return (
-      typeof window !== 'undefined' && !!sessionStorage.getItem('referralToken')
+      typeof window !== 'undefined' && !!sessionStorage.getItem('authToken')
     );
   }
 
