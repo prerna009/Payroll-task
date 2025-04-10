@@ -6,7 +6,8 @@ import { MyTaskComponent } from './sub-component/my-task/my-task.component';
 import { CcComponent } from './sub-component/cc/cc.component';
 import { AssignedByMeComponent } from './sub-component/assigned-by-me/assigned-by-me.component';
 import { ArchiveListComponent } from './sub-component/archive-list/archive-list.component';
-import { SharedModule } from '../../core/modules/shared/shared.module';
+import { SharedModule } from '../../core/shared/modules/shared.module';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 const routes : Routes = [
   {
@@ -21,7 +22,8 @@ const routes : Routes = [
     MyTaskComponent,
     CcComponent,
     AssignedByMeComponent,
-    ArchiveListComponent
+    ArchiveListComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     CommonModule,

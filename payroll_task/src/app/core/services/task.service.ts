@@ -1,35 +1,107 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TaskService {
-  load = new BehaviorSubject<boolean>(false)
-  $load = this.load.asObservable();
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-  constructor(private http: HttpClient) { }
+  getDefaultTaskParams() {
+    return {
+      from: 1,
+      to: 10,
+      title: '',
+      userId: this.authService.getUserId() || 0,
+      isArchive: false,
+      userIds: [],
+      priority: '',
+      statusIds: '',
+      fromDate: '',
+      toDate: '',
+      sortColumn: '',
+      sortOrder: '',
+    };
+  }
 
-  getMyTask(data: any){
+  getMyTask(data: any) {
     const params = {
-      From: data.from || 1,
-      To: data.to || 10,
-      Title: data.title || '',
-      UserId: data.userId || 0,
-      IsArchive: data.isArchive || false,
-      UserIds: data.userIds || '',
-      Priority: data.priority || '',
-      TaskStatus: data.StatusIds || '',
-      FromDueDate: data.FromDate || '',
-      ToDueDate: data.ToDate || '',
+      From: data.from,
+      To: data.to,
+      Title: data.title,
+      UserId: data.userId,
+      IsArchive: data.isArchive,
+      UserIds: data.userIds,
+      Priority: data.priority,
+      TaskStatus: data.StatusIds,
+      FromDueDate: data.FromDate,
+      ToDueDate: data.ToDate,
       SortByDueDate: '',
-      SortColumn: data.SortColumn || '',
-      SortOrder: data.SortOrder || ''
-    }
-    return this.http.post('api/Task/UserTasksAssignedToMe', params).pipe(
-      map(res => res)
-    );
+      SortColumn: data.SortColumn,
+      SortOrder: data.SortOrder,
+    };
+    return this.http
+      .post('api/Task/UserTasksAssignedToMe', params)
+      .pipe(map((res) => res));
+  }
 
+  getCC(data: any) {
+    const params = {
+      From: data.from,
+      To: data.to,
+      Title: data.title,
+      UserId: data.userId,
+      IsArchive: data.isArchive,
+      UserIds: data.userIds,
+      TaskStatus: data.StatusIds,
+      Priority: data.priority,
+    };
+
+    return this.http
+      .post('api/Task/OwnerTasks', params)
+      .pipe(map((res) => res));
+  }
+
+  getAssignedByMeTask(data: any) {
+    const params = {
+      From: data.from,
+      To: data.to,
+      Title: data.title,
+      UserId: data.userId,
+      IsArchive: data.isArchive,
+      UserIds: data.userIds,
+      Priority: data.priority,
+      TaskStatus: data.StatusIds,
+      FromDueDate: data.FromDate,
+      ToDueDate: data.ToDate,
+      SortByDueDate: '',
+    };
+
+    return this.http
+      .post('api/Task/UserTasksAssignedByMe', params)
+      .pipe(map((res) => res));
+  }
+
+  getArchiveListTask(data: any) {
+    const params = {
+      From: data.from,
+      To: data.to,
+      Title: data.title,
+      UserId: data.userId,
+      IsArchive: true,
+      UserIds: data.userIds,
+    };
+
+    return this.http
+      .post('api/Task/UserTasksAssignedByMe', params)
+      .pipe(map((res) => res));
+  }
+
+  deleteTask(taskId: number): Observable<any> {
+    return this.http
+      .get('api/Task/DeleteTask?taskId=' + taskId)
+      .pipe(map((res) => res));
   }
 }

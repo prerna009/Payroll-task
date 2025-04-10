@@ -16,9 +16,6 @@ export class TaskDataSource {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
 
-  private taskSubject = new BehaviorSubject<boolean>(true);
-  taskSubject$ = this.taskSubject.asObservable();
-
   private paginatorTotalSubject = new BehaviorSubject<number>(0);
   paginatorTotal$ = this.paginatorTotalSubject.asObservable();
 
@@ -28,44 +25,89 @@ export class TaskDataSource {
   private hasItemsSubject = new BehaviorSubject<boolean>(false);
   hasItems$ = this.hasItemsSubject.asObservable();
 
-  totalRecordNumber: number = 0;
-
   private subscriptions: Subscription[] = [];
 
   constructor(private taskService: TaskService) {
     const hasItemsSubscription = this.paginatorTotal$
       .pipe(
-        tap((res) => this.totalRecordNumber = res),
+        tap((total) => this.hasItemsSubject.next(total > 0)),
         distinctUntilChanged(),
         skip(1)
       )
-      .subscribe((res) => {
-        this.hasItemsSubject.next(res > 0);
-      });
-
+      .subscribe();
     this.subscriptions.push(hasItemsSubscription);
-    this.paginatorTotalSubject.next(this.totalRecordNumber);
   }
 
-  loadMyTask(data: any): void {
-    const params = {
-        from: data.from,
-        to: data.to,
-        title: data.title,
-        userId: data.userId,
-        isArchive: data.isArchive,
-        userIds: data.userIds,
-        priority: data.priority,
-        statusIds: data.statusIds,
-        fromDate: data.fromDate,
-        toDate: data.toDate,
-        sortColumn: data.sortColumn,
-        sortOrder: data.sortOrder
-    };
+  loadMyTask(params: any): void {
     this.loadingSubject.next(true);
-
     this.taskService
       .getMyTask(params)
+      .pipe(
+        map((res: any) => {
+          this.paginatorTotalSubject.next(res.data?.TotalCount || 0);
+          this.entitySubject.next(res.data?.TaskList || []);
+        }),
+        catchError((error) => {
+          console.error('Error loading tasks:', error);
+          this.paginatorTotalSubject.next(0);
+          this.entitySubject.next([]);
+          return of(null);
+        }),
+        finalize(() => {
+          this.loadingSubject.next(false);
+        })
+      )
+      .subscribe();
+  }
+
+  loadCC(params: any): void {
+    this.loadingSubject.next(true);
+    this.taskService
+      .getCC(params)
+      .pipe(
+        map((res: any) => {
+          this.paginatorTotalSubject.next(res.data?.TotalCount || 0);
+          this.entitySubject.next(res.data?.TaskList || []);
+        }),
+        catchError((error) => {
+          console.error('Error loading tasks:', error);
+          this.paginatorTotalSubject.next(0);
+          this.entitySubject.next([]);
+          return of(null);
+        }),
+        finalize(() => {
+          this.loadingSubject.next(false);
+        })
+      )
+      .subscribe();
+  }
+
+  loadAssignedByMe(params: any): void {
+    this.loadingSubject.next(true);
+    this.taskService
+      .getAssignedByMeTask(params)
+      .pipe(
+        map((res: any) => {
+          this.paginatorTotalSubject.next(res.data?.TotalCount || 0);
+          this.entitySubject.next(res.data?.TaskList || []);
+        }),
+        catchError((error) => {
+          console.error('Error loading tasks:', error);
+          this.paginatorTotalSubject.next(0);
+          this.entitySubject.next([]);
+          return of(null);
+        }),
+        finalize(() => {
+          this.loadingSubject.next(false);
+        })
+      )
+      .subscribe();
+  }
+
+  loadArchiveList(params: any): void {
+    this.loadingSubject.next(true);
+    this.taskService
+      .getArchiveListTask(params)
       .pipe(
         map((res: any) => {
           this.paginatorTotalSubject.next(res.data.TotalCount || 0);
@@ -79,17 +121,10 @@ export class TaskDataSource {
         }),
         finalize(() => {
           this.loadingSubject.next(false);
-          this.taskSubject.next(false);
         })
       )
       .subscribe();
   }
-
-  loadCC() {}
-
-  loadAssignedByMe() {}
-
-  loadArchiveList() {}
 
   connect(): Observable<any[]> {
     return this.tasks$;
@@ -100,7 +135,6 @@ export class TaskDataSource {
     this.entitySubject.complete();
     this.loadingSubject.complete();
     this.paginatorTotalSubject.complete();
-    this.taskSubject.complete();
     this.hasItemsSubject.complete();
   }
 }

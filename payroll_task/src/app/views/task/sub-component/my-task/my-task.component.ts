@@ -1,14 +1,22 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { TaskDataSource } from '../../../../core/datasource/task.datasource';
 import { TaskService } from '../../../../core/services/task.service';
 import { merge, Subscription, tap } from 'rxjs';
-import { AuthService } from '../../../../core/services/auth.service';
+import { TranslateService } from '@ngx-translate/core';
+import { LayoutUtilsService } from '../../../../core/shared/services/layout-utils.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-my-task',
   templateUrl: './my-task.component.html',
-  styleUrl: './my-task.component.scss'
+  styleUrl: './my-task.component.scss',
 })
 export class MyTaskComponent implements OnInit, AfterViewInit {
   dataSource!: TaskDataSource;
@@ -23,36 +31,22 @@ export class MyTaskComponent implements OnInit, AfterViewInit {
     'Action',
   ];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild('searchInput', { static: false }) search!: ElementRef;
+  @ViewChild('searchInput') search!: ElementRef;
   subscriptions: Subscription[] = [];
-
-  taskData = {
-    from: 1,
-    to: 10,
-    title: '',
-    userId: 0,
-    isArchive: false,
-    userIds: '',
-    priority: '',
-    statusIds: '',
-    fromDate: '',
-    toDate: '',
-    sortColumn: '',
-    sortOrder: '',
-  };
+  taskData: any;
 
   constructor(
     private taskService: TaskService,
-    private authService: AuthService
+    private layoutUtilsService: LayoutUtilsService,
+    private toastr: ToastrService
   ) {}
-  
+
   ngOnInit(): void {
-    const userId = this.authService.getUserId();
-    if (userId) {
-      this.taskData.userId = userId;
-      this.dataSource = new TaskDataSource(this.taskService);
-      this.loadMyTask();
-    }
+    this.taskData = this.taskService.getDefaultTaskParams();
+    this.paginator.pageSize = 10;
+
+    this.dataSource = new TaskDataSource(this.taskService);
+    this.loadMyTask();
   }
 
   ngAfterViewInit(): void {
@@ -73,4 +67,25 @@ export class MyTaskComponent implements OnInit, AfterViewInit {
     this.taskData.to = (this.paginator.pageIndex + 1) * this.paginator.pageSize;
     this.dataSource.loadMyTask(this.taskData);
   }
+
+  deleteTask(Id: number) {
+    const title = 'DELETE TASK';
+    const message = 'Do you want to delete this Task?';
+    const waitMessage = 'Task is deleting...';
+    const dialogRef = this.layoutUtilsService.deleteElement(title, message, waitMessage);
+  
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.taskService.deleteTask(Id).subscribe({
+          next: () => {
+            this.toastr.success('Task Deleted Successfully');
+            this.loadMyTask();
+          },
+          error: () => {
+            this.toastr.error('Something went wrong while deleting.');
+          }
+        });
+      }
+    });
+  }  
 }

@@ -7,6 +7,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatTableModule } from "@angular/material/table";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   declarations: [],
@@ -18,7 +19,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
     MatTabsModule,
     MatTableModule,
     MatPaginatorModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDialogModule
   ]
 })
 export class SharedModule { }

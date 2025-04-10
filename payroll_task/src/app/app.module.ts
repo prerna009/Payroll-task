@@ -8,7 +8,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ToastrModule } from 'ngx-toastr';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { SharedModule } from './core/modules/shared/shared.module';
+import { SharedModule } from './core/shared/modules/shared.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 @NgModule({
