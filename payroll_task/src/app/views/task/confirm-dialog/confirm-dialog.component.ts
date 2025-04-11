@@ -7,16 +7,23 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './confirm-dialog.component.scss'
 })
 export class ConfirmDialogComponent {
+  isLoading: boolean = false;
+
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   onCancel(): void {
-    this.dialogRef.close(false);
+    if(!this.isLoading){
+      this.dialogRef.close(false);
+    }
   }
 
   onConfirm(): void {
-    this.dialogRef.close(true);
+    this.isLoading = true;
+    setTimeout(() => {
+      this.dialogRef.close(true);
+    }, 1000);
   }
 }

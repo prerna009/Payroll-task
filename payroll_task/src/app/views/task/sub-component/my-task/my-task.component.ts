@@ -9,7 +9,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { TaskDataSource } from '../../../../core/datasource/task.datasource';
 import { TaskService } from '../../../../core/services/task.service';
 import { merge, Subscription, tap } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 import { LayoutUtilsService } from '../../../../core/shared/services/layout-utils.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -87,5 +86,26 @@ export class MyTaskComponent implements OnInit, AfterViewInit {
         });
       }
     });
-  }  
+  } 
+  
+  archiveTask(Id: number) {
+    const title = 'ARCHIVE TASK';
+    const message = 'Do you want to archive this Task?';
+    const waitMessage = 'Task is archiving...';
+    const dialogRef = this.layoutUtilsService.confirmElement(title, message, waitMessage);
+  
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.taskService.archiveTask(Id, true).subscribe({
+          next: () => {
+            this.toastr.success('Task Archived Successfully');
+            this.loadMyTask();
+          },
+          error: () => {
+            this.toastr.error('Something went wrong while deleting.');
+          }
+        });
+      }
+    });
+  }
 }

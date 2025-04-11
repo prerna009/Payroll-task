@@ -31,13 +31,26 @@
 
     <ng-container matColumnDef="Status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let mytask">{{mytask?.TaskStatus || '-'}}</td>
+        <td mat-cell *matCellDef="let mytask"
+            [ngStyle]="{'color': (mytask?.TaskStatus === 100) ? 'green' : (mytask?.TaskStatus === 0) ? 'orange' : (mytask?.TaskStatus === -1) ? 'red' : (mytask?.TaskStatus > 0 && mytask?.TaskStatus < 100) ? 'blue' : 'black'}">
+            {{
+            mytask?.TaskStatus === 100 ? 'Completed' :
+            mytask?.TaskStatus === 0 ? 'Accepted' :
+            mytask?.TaskStatus === -1 ? 'Not Accepted' :
+            mytask?.TaskStatus > 0 && mytask?.TaskStatus < 100 ? 'Partial Complete (' + mytask.TaskStatus + '%)' : '-'
+                }} </td>
     </ng-container>
 
     <ng-container matColumnDef="Action">
         <th mat-header-cell *matHeaderCellDef>Action</th>
         <td mat-cell *matCellDef="let mytask">
-            <button (click)="deleteTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Delete" type="button"
+            <button (click)="archiveTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Archive"
+                type="button"
+                [ngStyle]="{'visibility' : (taskData.userId === mytask.AssignedByUserId && !mytask.IsArchive) ? 'visible' : 'hidden'}">
+                <img class="action-btn" src="../../../../../assets/media/TaskArchive.svg">
+            </button>&nbsp;
+            <button (click)="deleteTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Delete"
+                type="button"
                 [ngStyle]="{'visibility' : (taskData.userId === mytask.AssignedByUserId && !mytask.IsArchive) ? 'visible' : 'hidden'}">
                 <img class="action-btn" src="../../../../../assets/media/TaskDelete.svg">
             </button>&nbsp;

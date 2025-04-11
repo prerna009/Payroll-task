@@ -27,6 +27,7 @@ export class CcComponent implements OnInit, AfterViewInit {
     'DueDate',
     'Priority',
     'Status',
+    'Action'
   ];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild('searchInput') search!: ElementRef;
@@ -84,7 +85,28 @@ export class CcComponent implements OnInit, AfterViewInit {
           },
           error: () => {
             this.toastr.error('Something went wrong while deleting.');
+          }
+        });
+      }
+    });
+  }
+
+  archiveTask(Id: number) {
+    const title = 'ARCHIVE TASK';
+    const message = 'Do you want to archive this Task?';
+    const waitMessage = 'Task is archiving...';
+    const dialogRef = this.layoutUtilsService.confirmElement(title, message, waitMessage);
+  
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.taskService.archiveTask(Id, true).subscribe({
+          next: () => {
+            this.toastr.success('Task Archived Successfully');
+            this.loadMyCC();
           },
+          error: () => {
+            this.toastr.error('Something went wrong while deleting.');
+          }
         });
       }
     });

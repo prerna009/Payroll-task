@@ -1,8 +1,13 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 <mat-dialog-content>
-  <p>{{ data.description }}</p>
+  <p *ngIf="!isLoading">{{ data.description }}</p>
+  <p *ngIf="isLoading" style="color: gray;">
+    {{ data.waitMessage }}
+  </p>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button color="primary" (click)="onConfirm()">Delete</button>
+<mat-dialog-actions>
+  <button mat-button style="color: black;" (click)="onCancel()" [disabled]="isLoading">Cancel</button>
+  <button mat-button [color]="data.confirmedBtn === 'Delete' ? 'warn': 'primary'" (click)="onConfirm()" [disabled]="isLoading">
+    {{ data.confirmedBtn }}
+  </button>
 </mat-dialog-actions>

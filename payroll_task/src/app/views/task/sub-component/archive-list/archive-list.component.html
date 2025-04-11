@@ -31,7 +31,22 @@
 
     <ng-container matColumnDef="Status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
-        <td mat-cell *matCellDef="let mytask">{{mytask?.TaskStatus || '-'}}</td>
+        <td mat-cell *matCellDef="let mytask"
+            [ngStyle]="{'color': (mytask?.CompletionPercentage === 0) ? 'orange' : (mytask?.CompletionPercentage === 100) ? 'green' : (mytask?.CompletionPercentage > 0 && mytask?.CompletionPercentage < 100) ? 'blue' : 'black' }">
+            {{
+                mytask?.CompletionPercentage === 100 ? 'Completed' :
+                mytask?.CompletionPercentage === 0 ? 'Pending' :
+                mytask?.CompletionPercentage > 0 && mytask?.CompletionPercentage < 100 ? 'Partial Complete (' + mytask.CompletionPercentage + '%)' : '-'
+            }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="Action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let mytask">
+            <button (click)="unarchiveTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Unarchive" type="button">
+                <img class="action-btn" src="../../../../../assets/media/TaskUnarchive.svg">
+            </button>&nbsp;
+        </td>
     </ng-container>
     
     <tr mat-header-row *matHeaderRowDef="tasks"></tr>

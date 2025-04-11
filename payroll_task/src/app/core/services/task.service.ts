@@ -104,4 +104,15 @@ export class TaskService {
       .get('api/Task/DeleteTask?taskId=' + taskId)
       .pipe(map((res) => res));
   }
+
+  archiveTask(taskId: number, isArchive: boolean): Observable<any> {
+    const params = {
+      IsArchive: isArchive,
+      TaskId: taskId
+    }
+    return this.http.post('api/Task/Archive', params)
+      .pipe(
+        map(res => res)
+      );
+  }
 }
