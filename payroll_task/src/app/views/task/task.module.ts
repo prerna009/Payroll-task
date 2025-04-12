@@ -8,6 +8,8 @@ import { AssignedByMeComponent } from './sub-component/assigned-by-me/assigned-b
 import { ArchiveListComponent } from './sub-component/archive-list/archive-list.component';
 import { SharedModule } from '../../core/shared/modules/shared.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { PartialCompleteStatusComponent } from './partial-complete-status/partial-complete-status.component';
+import { ViewTaskCoverageComponent } from './view-task-coverage/view-task-coverage.component';
 
 const routes : Routes = [
   {
@@ -23,7 +25,9 @@ const routes : Routes = [
     CcComponent,
     AssignedByMeComponent,
     ArchiveListComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    PartialCompleteStatusComponent,
+    ViewTaskCoverageComponent
   ],
   imports: [
     CommonModule,

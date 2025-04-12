@@ -108,11 +108,30 @@ export class TaskService {
   archiveTask(taskId: number, isArchive: boolean): Observable<any> {
     const params = {
       IsArchive: isArchive,
-      TaskId: taskId
-    }
-    return this.http.post('api/Task/Archive', params)
-      .pipe(
-        map(res => res)
-      );
+      TaskId: taskId,
+    };
+    return this.http.post('api/Task/Archive', params).pipe(map((res) => res));
+  }
+
+  updateTaskStatus(taskId: number, statusIds: number): Observable<any> {
+    const params = {
+      TaskId: taskId,
+      TaskStatusValue: statusIds,
+    };
+    return this.http
+      .post('api/Task/UpdateTaskStatus', params)
+      .pipe(map((res) => res));
+  }
+
+  getPartialTaskStatus(): Observable<any> {
+    return this.http
+      .get<any>('api/Task/UserTaskStatusMaster')
+      .pipe(map((res) => res));
+  }
+
+  getViewTask(taskId: number): Observable<any> {
+    return this.http
+      .get<any>('api/Task/StatusReport?taskId=' + taskId)
+      .pipe(map((res) => res));
   }
 }

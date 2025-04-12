@@ -49,10 +49,29 @@
                 [ngStyle]="{'visibility' : (taskData.userId === mytask.AssignedByUserId && !mytask.IsArchive) ? 'visible' : 'hidden'}">
                 <img class="action-btn" src="../../../../../assets/media/TaskArchive.svg">
             </button>&nbsp;
+            <button (click)="acceptTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Accept"
+                type="button" [ngStyle]="{'visibility' : (mytask.TaskStatus === -1) ? 'visible' : 'hidden'}">
+                <img class="action-btn" src="../../../../../assets/media/TaskAccept.svg">
+            </button>&nbsp;
+            <button (click)="viewTaskCoverage(mytask.TaskId)" mat-icon-button color="primary" matTooltip="View Task Coverage"
+                type="button"
+                [ngStyle]="{'visibility' : (taskData.userId === mytask.AssignedByUserId) ? 'visible' : 'hidden'}">
+                <img class="action-btn" src="../../../../../assets/media/TaskViewTaskCoverage.svg">
+            </button>&nbsp;
             <button (click)="deleteTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Delete"
                 type="button"
-                [ngStyle]="{'visibility' : (taskData.userId === mytask.AssignedByUserId && !mytask.IsArchive) ? 'visible' : 'hidden'}">
+                [ngStyle]="{'visibility' : (taskData.userId === mytask.AssignedByUserId) ? 'visible' : 'hidden'}">
                 <img class="action-btn" src="../../../../../assets/media/TaskDelete.svg">
+            </button>&nbsp;
+            <button (click)="completeTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Complete"
+                type="button"
+                [ngStyle]="{'visibility' : (mytask.TaskStatus !== -1 && mytask.TaskStatus !== 100) ? 'visible' : 'hidden'}">
+                <img class="action-btn" src="../../../../../assets/media/TaskComplete.svg">
+            </button>&nbsp;
+            <button (click)="partialCompleteTask(mytask.TaskId, mytask.CompletionPercentage)" mat-icon-button color="primary" matTooltip="Partial Complete"
+                type="button"
+                [ngStyle]="{'visibility' : (mytask.TaskStatus >=0 && mytask.TaskStatus < 100) ? 'visible' : 'hidden'}">
+                <img class="action-btn" src="../../../../../assets/media/TaskPartialComplete.svg">
             </button>&nbsp;
         </td>
     </ng-container>

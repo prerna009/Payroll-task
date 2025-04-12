@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Task Coverage</h2>
+
+<mat-dialog-content>
+  <div>
+    <div *ngFor="let item of taskCoverage" class="d-flex justify-content-between align-items-center fw-bold fs-20 mb-2">
+      <span class="fw-medium">{{ item.Name }}</span>
+      <span class="text-muted">{{ item.Count }}%</span>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onClick()">Close</button>
+</mat-dialog-actions>

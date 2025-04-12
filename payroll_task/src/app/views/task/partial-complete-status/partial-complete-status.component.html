@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Partial Complete</h2>
+
+<mat-dialog-content>
+  <div class="percent-selection">
+    <div
+      class="percent-block"
+      *ngFor="let partial of partialData"
+      [class.isSelected]="(data.CompletionPercentage === partial.Value && !isChanged) || selectedValue === partial.Value"
+      (click)="taskValue(partial.Value)">
+      {{ partial.Value }}%
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button style="color: black;" (click)="onClick()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">Done</button>
+</mat-dialog-actions>

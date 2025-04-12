@@ -115,4 +115,8 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  viewTaskCoverage(taskId: number){
+    this.layoutUtilsService.viewTask(taskId);
+  }
 }
