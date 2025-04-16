@@ -10,6 +10,10 @@ import { SharedModule } from '../../core/shared/modules/shared.module';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { PartialCompleteStatusComponent } from './partial-complete-status/partial-complete-status.component';
 import { ViewTaskCoverageComponent } from './view-task-coverage/view-task-coverage.component';
+import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { AddUsersDialogComponent } from './add-users-dialog/add-users-dialog.component';
 
 const routes : Routes = [
   {
@@ -27,10 +31,15 @@ const routes : Routes = [
     ArchiveListComponent,
     ConfirmDialogComponent,
     PartialCompleteStatusComponent,
-    ViewTaskCoverageComponent
+    ViewTaskCoverageComponent,
+    AddTaskDialogComponent,
+    AddUsersDialogComponent
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgxMatSelectSearchModule,
     SharedModule,
     RouterModule.forChild(routes)
   ]

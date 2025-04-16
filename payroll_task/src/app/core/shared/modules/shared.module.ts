@@ -9,6 +9,9 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatSelectModule } from "@angular/material/select";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [],
@@ -22,7 +25,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatDialogModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatCheckboxModule
   ]
 })
 export class SharedModule { }
