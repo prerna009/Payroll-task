@@ -33,15 +33,14 @@ export class AddUsersDialogComponent implements OnInit {
   ngOnInit(): void {
     if (this.data?.usersData) {
       this.showRemoveUser = true;
+      this.removeUserDetails = this.data.usersData;
+      console.log(this.removeUserDetails);
     } else if (this.data?.usersIds?.length > 0) {
       this.addRemove = true;
     }
-
-    const from =
-      this.showRemoveUser || this.addRemove ? 1 : this.previousFromRow;
-    const to = this.showRemoveUser || this.addRemove ? 100 : this.previousToRow;
-
-    this.getMembersList(from, to, '');
+    this.previousFromRow = 1;
+    this.previousToRow = 10;
+    this.getMembersList(this.previousFromRow, this.previousToRow, '');
   }
 
   getMembersList(from: number, to: number, searchText: string): void {
@@ -50,13 +49,13 @@ export class AddUsersDialogComponent implements OnInit {
       .getCompanyMembers(from, to, searchText)
       .pipe(
         map((res) => {
-          const members = res?.data?.Members || [];
-          if (searchText) {
+          const members = res.data.Members || [];
+          if (from === 1) {
             this.memberList = members;
           } else {
-            this.memberList.push(...members);
+            this.memberList = [...this.memberList, ...members];
           }
-          this.totalRecords = res?.data?.TotalRecords || 0;
+          this.totalRecords = res.data.TotalRecords;
           this.lastRowIndex = this.memberList.length;
           this.viewLoading = false;
           this.markSelectedMembers();
@@ -69,7 +68,7 @@ export class AddUsersDialogComponent implements OnInit {
     const pos = event.target.scrollTop + event.target.offsetHeight;
     const max = event.target.scrollHeight;
 
-    if (pos >= max && this.previousToRow < this.totalRecords) {
+    if (pos >= max && this.lastRowIndex < this.totalRecords) {
       this.previousFromRow += 10;
       this.previousToRow += 10;
       this.getMembersList(this.previousFromRow, this.previousToRow, '');
@@ -77,28 +76,46 @@ export class AddUsersDialogComponent implements OnInit {
   }
 
   searchMember(searchValue: string): void {
-    this.getMembersList(1, this.totalRecords, searchValue);
-    this.noRecords = this.memberList.length === 0;
+    this.viewLoading = true;
+    this.taskService
+      .getCompanyMembers(1, this.totalRecords || 100, searchValue)
+      .pipe(
+        map((res) => {
+          this.memberList = res.data.Members || [];
+          this.noRecords = this.memberList.length === 0;
+          this.markSelectedMembers();
+          this.viewLoading = false;
+        })
+      )
+      .subscribe();
   }
 
   checkedMember(event: any, userId: number, memberName: string): void {
-    const isChecked = event.checked;
-    if (isChecked) {
+    if (event.isChecked) {
       if (this.showRemoveUser) {
-        const userObj =
-          this.data.Action === 'Owner' ? { UserId: userId } : userId;
-        this.removeUserList.push(userObj);
+        if (this.data.Action === 'Owner') {
+          this.removeUserList.push({ UserId: userId });
+        } else {
+          this.removeUserList.push(userId);
+        }
       } else {
-        this.userIds.push({ UserId: userId, Name: memberName });
+        const params = { UserId: userId, Name: memberName };
+        this.userIds.push(params);
       }
     } else {
       if (this.showRemoveUser) {
-        this.removeUserList = this.removeUserList.filter((x: any) =>
-          this.data.Action === 'Owner' ? x.UserId !== userId : x !== userId
+        const index = this.removeUserList.findIndex((x: any) =>
+          typeof x === 'object' ? x.UserId === userId : x === userId
         );
+        if (index !== -1) this.removeUserList.splice(index, 1);
       } else {
-        this.userIds = this.userIds.filter((x: any) => x.UserId !== userId);
+        const index = this.userIds.findIndex((x) => x.UserId === userId);
+        if (index > -1) this.userIds.splice(index, 1);
       }
+    }
+    const member = this.memberList.find((m) => m.UserId === userId);
+    if (member) {
+      member.isChecked = event.isChecked;
     }
   }
 
@@ -124,40 +141,31 @@ export class AddUsersDialogComponent implements OnInit {
           })
         )
         .subscribe();
-      this.taskService
-        .removeOwnerTask(this.data.taskId, this.removeUserList)
-        .pipe(
-          map((res: any) => {
-            if (res.Status === 200) {
-              this.dialogRef.close({ isEdit: true });
-            }
-          })
-        )
-        .subscribe();
     } else {
       this.dialogRef.close({ members: this.userIds, isEdit: true });
     }
   }
 
   markSelectedMembers(): void {
-    const { usersIds = [], controlname } = this.data;
     this.userIds = [];
-    if (!usersIds?.length) return;
-
-    this.memberList.forEach((member) => {
-      if (controlname === 'UserIds') {
-        if (usersIds.includes(member.UserId)) {
+    if (this.data.controlname === 'UserIds') {
+      this.memberList?.forEach((member: any) => {
+        if (this.data.usersIds.includes(member.UserId)) {
           member.isChecked = true;
           this.userIds.push({ UserId: member.UserId, Name: member.Name });
         }
-      } else if (controlname === 'TaskOwner') {
-        const match = usersIds.find((u: any) => u.UserId === member.UserId);
-        if (match) {
+      });
+    } else if (this.data.controlname === 'TaskOwner') {
+      this.memberList.forEach((member) => {
+        const matched = this.data.usersIds.find(
+          (x: any) => x.UserId === member.UserId
+        );
+        if (matched) {
           member.isChecked = true;
-          this.userIds.push(match);
         }
-      }
-    });
+      });
+      this.userIds = [...this.data.usersIds];
+    }
   }
 
   onNoClick(): void {

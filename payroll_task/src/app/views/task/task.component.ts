@@ -42,7 +42,7 @@ export class TaskComponent implements OnInit {
     };
 
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
-      width: '500px',
+      width: '600px',
       data: params,
       disableClose: true
     });

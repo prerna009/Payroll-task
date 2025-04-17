@@ -119,4 +119,18 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit {
   viewTaskCoverage(taskId: number){
     this.layoutUtilsService.viewTask(taskId);
   }
+
+  editTask(taskId: number) {
+    const params = {
+      Action: 'Edit',
+      Button: 'Edit',
+      UserId: taskId,
+    };
+    const dialogRef = this.layoutUtilsService.editTask(params);
+    dialogRef.afterClosed().subscribe((res) => {
+      if (!res) return;
+      this.toastr.success('Task Updated Successfully');
+      this.loadAssignedByMe();
+    });
+  }
 }

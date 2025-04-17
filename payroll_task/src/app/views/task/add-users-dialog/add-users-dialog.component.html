@@ -6,20 +6,31 @@
         <input matInput #searchInput (keyup)="searchMember(searchInput.value)" placeholder="Search" />
     </mat-form-field>
 
-    <!-- No Records Found -->
-    <div *ngIf="noRecords" class="text-center">
-        <h6>No Records Found</h6>
-    </div>
-
     <!-- Loader -->
     <div *ngIf="viewLoading" class="text-center">
         <mat-spinner [diameter]="30" class="m-auto"></mat-spinner>
     </div>
 
+    <!-- No Records Found -->
+    <div *ngIf="!viewLoading && noRecords" class="text-center">
+        <h6>No Records Found</h6>
+    </div>
+
     <!-- Members List -->
     <div *ngIf="!viewLoading && !noRecords">
         <div *ngFor="let member of memberList" class="form-check">
-            <ng-container *ngIf="!showRemoveUser || (data?.removeUserDetails?.includes(member.UserId))">
+            <ng-container *ngIf="(data.Action === 'Add') || (data.Action === 'Edit' && !data.usersIds.includes(member.UserId))">
+                <mat-checkbox [checked]="member.isChecked" (change)="checkedMember($event, member.UserId, member.Name)">
+                    {{ member.Name }}
+                </mat-checkbox>
+            </ng-container>
+        </div>
+    </div>
+
+    <!--Remove List-->
+    <div *ngIf="!viewLoading && !noRecords">
+        <div *ngFor="let member of removeUserDetails" class="form-check">
+            <ng-container>
                 <mat-checkbox [checked]="member.isChecked" (change)="checkedMember($event, member.UserId, member.Name)">
                     {{ member.Name }}
                 </mat-checkbox>

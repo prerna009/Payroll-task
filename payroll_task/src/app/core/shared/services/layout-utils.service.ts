@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../views/task/confirm-dialog/confirm-dialog.component';
 import { PartialCompleteStatusComponent } from '../../../views/task/partial-complete-status/partial-complete-status.component';
 import { ViewTaskCoverageComponent } from '../../../views/task/view-task-coverage/view-task-coverage.component';
+import { AddTaskDialogComponent } from '../../../views/task/add-task-dialog/add-task-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +36,13 @@ export class LayoutUtilsService {
     return this.dialog.open(ViewTaskCoverageComponent, {
       width: '400px',
       data: { taskId }
+    });
+  }
+
+  editTask(params: any) {
+    return this.dialog.open(AddTaskDialogComponent, {
+      width: '500px',
+      data: params
     });
   }
 }

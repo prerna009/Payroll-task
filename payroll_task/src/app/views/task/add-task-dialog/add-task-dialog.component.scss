@@ -1,0 +1,27 @@
+mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.form {
+    overflow-x: hidden;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+
+.remove-value{
+    color: red;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+mat-select{
+    font-size: 14px;
+}

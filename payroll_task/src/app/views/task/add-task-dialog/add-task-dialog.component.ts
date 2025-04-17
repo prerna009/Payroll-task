@@ -98,7 +98,7 @@ export class AddTaskDialogComponent implements OnInit {
           map((res) => {
             this.taskDetails = res.data;
             const currentUserId = this.authService.getUserId();
-            const userData = res.data.AssignedToUserIds || [];
+            const userData = this.taskDetails.AssignedToUserIds;
 
             if (
               (userData.includes(currentUserId) && userData.length > 1) ||
@@ -121,15 +121,8 @@ export class AddTaskDialogComponent implements OnInit {
     this.addTaskForm = this.fb.group({
       Id: [''],
       AssignedBy: [this.data.UserId],
-      AssignedToUserId: [''],
-      AssignedDate: [''],
-      CompletedDate: [''],
       Description: ['', Validators.required],
-      IntercomGroupIds: [this.IntercomGroupIds],
       IsActive: [this.isActive],
-      Latitude: [''],
-      Location: [''],
-      Longitude: [''],
       Image: [''],
       MultimediaData: [''],
       MultimediaExtension: [''],
@@ -140,19 +133,11 @@ export class AddTaskDialogComponent implements OnInit {
       TaskEndDate: [''],
       TaskDisplayOwners: [''],
       TaskOwners: [''],
-      TaskStatus: [''],
       Title: ['', Validators.required],
       UserDisplayIds: ['', Validators.required],
       UserIds: [''],
       LeadId: [''],
     });
-  }
-
-  onTabChange() {
-    this.createForm();
-    if (this.data.Action === 'Edit') {
-      this.patchFormValue();
-    }
   }
 
   patchFormValue() {

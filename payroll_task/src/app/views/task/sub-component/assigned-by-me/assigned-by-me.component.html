@@ -1,7 +1,7 @@
 <table mat-table [dataSource]="(dataSource.tasks$ | async) || []" class="mat-elevation-z1">
     <ng-container matColumnDef="Title">
         <th mat-header-cell *matHeaderCellDef>Title</th>
-        <td mat-cell *matCellDef="let mytask">{{mytask?.Title || '-'}}</td>
+        <td mat-cell *matCellDef="let mytask" (click)="editTask(mytask.TaskId)" class="title-edit">{{mytask?.Title || '-'}}</td>
     </ng-container>
 
     <ng-container matColumnDef="CustomerName">
@@ -64,10 +64,10 @@
     <tr mat-header-row *matHeaderRowDef="tasks"></tr>
     <tr mat-row *matRowDef="let mytask; columns: tasks;"></tr>
 </table>
-<div class="mat-table__message" *ngIf="(dataSource.tasks$ | async)?.length === 0 && !(dataSource.loading$ | async)">
+<div *ngIf="(dataSource.tasks$ | async)?.length === 0 && !(dataSource.loading$ | async)">
     No records found
 </div>
-<div class="mat-table__message" *ngIf="dataSource.loading$ | async">
+<div *ngIf="dataSource.loading$ | async">
     <mat-spinner [diameter]="20">Please wait...</mat-spinner>
 </div>
 <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 15, 25]" [length]="dataSource.paginatorTotal$ | async"
