@@ -16,14 +16,11 @@
             </button>
         </div>
     </div>
-    <div class="row align-items-center py-2 border-bottom">
-        <div class="col-md-8">
-            <button class="mat-button" mat-flat-button color="primary">Filter</button>
-        </div>
-        <div class="col-md-4">
-            <mat-form-field class="w-50">
+    <div class="row py-2 border-bottom">
+        <div class="col-md-12" style="justify-content: flex-end; display: flex; align-items: baseline;">
+            <mat-form-field style="margin-right: 10px;">
                 <mat-label>Search</mat-label>
-                <input matInput placeholder="Search">
+                <input matInput>
             </mat-form-field>
             <button class="mat-button" mat-flat-button color="primary" (click)="addTask()">Add Task</button>
         </div>

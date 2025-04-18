@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 <mat-dialog-content>
-  <p *ngIf="!isLoading">{{ data.description }}</p>
+  <p *ngIf="!isLoading">{{ data.message }}</p>
   <p *ngIf="isLoading" style="color: gray;">
     {{ data.waitMessage }}
   </p>

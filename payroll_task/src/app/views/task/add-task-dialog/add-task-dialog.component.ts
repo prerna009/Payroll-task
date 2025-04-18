@@ -75,13 +75,10 @@ export class AddTaskDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private taskService: TaskService,
-    private authService: AuthService,
     private toaster: ToastrService,
     private dialog: MatDialog,
     private datePipe: DatePipe
-  ) {
-    this.selectedIndex = data.SelectedIndex ?? 0;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getLeadCustomerList();
@@ -90,30 +87,12 @@ export class AddTaskDialogComponent implements OnInit {
     this.searchText.valueChanges.subscribe((text) => {
       this.leadFilter = this.filterLeadCustomers(text ?? '');
     });
-
+    
     if (this.data.Action === 'Edit') {
-      this.taskService
-        .getTaskDetails(this.data.UserId)
-        .pipe(
-          map((res) => {
-            this.taskDetails = res.data;
-            const currentUserId = this.authService.getUserId();
-            const userData = this.taskDetails.AssignedToUserIds;
-
-            if (
-              (userData.includes(currentUserId) && userData.length > 1) ||
-              (!userData.includes(currentUserId) && userData.length >= 1)
-            ) {
-              this.selectedIndex = 0;
-              this.tabDisable = false;
-            } else {
-              this.selectedIndex = 1;
-              this.tabDisable = true;
-            }
-            this.patchFormValue();
-          })
-        )
-        .subscribe();
+      this.selectedIndex = this.data.selectedIndex ?? 0;
+      this.tabDisable = this.data.tabDisable ?? false;
+      this.taskDetails = this.data.taskDetails;
+      this.patchFormValue();
     }
   }
 
@@ -193,7 +172,7 @@ export class AddTaskDialogComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
       const file = input.files[0];
-      if (file.size < 5000000) {
+      if (file.size < 2000000) {
         this.displayFileName = file.name;
         this.imageName = file.name.split('\\').pop()?.split('/').pop() ?? '';
         const extMatch = this.imageName.split('.').pop();
@@ -279,6 +258,7 @@ export class AddTaskDialogComponent implements OnInit {
 
 
     dialogRef.afterClosed().subscribe((res) => {
+      debugger
       if (!res) return;
       if (controlName === 'UserIds') {
         this.userIds = [];

@@ -11,6 +11,7 @@ import { TaskService } from '../../../../core/services/task.service';
 import { merge, Subscription, tap } from 'rxjs';
 import { LayoutUtilsService } from '../../../../core/shared/services/layout-utils.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-my-task',
@@ -37,7 +38,6 @@ export class MyTaskComponent implements OnInit, AfterViewInit {
   constructor(
     private taskService: TaskService,
     private layoutUtilsService: LayoutUtilsService,
-    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -68,104 +68,35 @@ export class MyTaskComponent implements OnInit, AfterViewInit {
   }
 
   deleteTask(taskId: number) {
-    const title = 'DELETE TASK';
-    const message = 'Do you want to delete this Task?';
-    const waitMessage = 'Task is deleting...';
-    const dialogRef = this.layoutUtilsService.deleteElement(title, message, waitMessage);
-  
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.taskService.deleteTask(taskId).subscribe({
-          next: () => {
-            this.toastr.success('Task Deleted Successfully');
-            this.loadMyTask();
-          },
-          error: () => {
-            this.toastr.error('Something went wrong while deleting.');
-          }
-        });
-      }
-    });
-  } 
-  
+    this.layoutUtilsService.deleteTask(taskId, () => this.loadMyTask());
+  }
+
   archiveTask(taskId: number) {
-    const title = 'ARCHIVE TASK';
-    const message = 'Do you want to archive this Task?';
-    const waitMessage = 'Task is archiving...';
-    const dialogRef = this.layoutUtilsService.confirmElement(title, message, waitMessage);
-  
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.taskService.archiveTask(taskId, true).subscribe({
-          next: () => {
-            this.toastr.success('Task Archived Successfully');
-            this.loadMyTask();
-          },
-          error: () => {
-            this.toastr.error('Something went wrong while archiving.');
-          }
-        });
-      }
-    });
+    this.layoutUtilsService.archiveTask(taskId, () => this.loadMyTask());
   }
 
   acceptTask(taskId: number) {
-    this.taskService.updateTaskStatus(taskId, 0).subscribe({
-      next:() => {
-        this.toastr.success('Task Accepted Successfully');
-        this.loadMyTask();
-      },
-      error:() => {
-        this.toastr.error('Something went wrong while accepting.');
-      }
-    });
+    this.layoutUtilsService.acceptTask(taskId, () => this.loadMyTask());
   }
 
-  completeTask(Id: number) {
-    const title = 'COMPLETE TASK';
-    const message = 'Are you sure this Task is complete?';
-    const waitMessage = 'Task is updating...';
-    const dialogRef = this.layoutUtilsService.confirmElement(title, message, waitMessage);
-  
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.taskService.updateTaskStatus(Id, 100).subscribe({
-          next: () => {
-            this.toastr.success('Task Completed Successfully');
-            this.loadMyTask();
-          },
-          error: () => {
-            this.toastr.error('Something went wrong while completing.');
-          }
-        });
-      }
-    });
+  completeTask(taskId: number) {
+    this.layoutUtilsService.completeTask(taskId, () => this.loadMyTask());
   }
 
   partialCompleteTask(taskId: number, CompletionPercentage: number) {
-    const dialogRef = this.layoutUtilsService.partialElement(taskId, CompletionPercentage);
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.toastr.success('Partial Complete Task Updated Successfully');
-        this.loadMyTask();
-      }
-    });
+    this.layoutUtilsService.partialCompleteTask(
+      taskId,
+      CompletionPercentage,
+      () => this.loadMyTask()
+    );
   }
 
-  viewTaskCoverage(taskId: number){
+  viewTaskCoverage(taskId: number) {
     this.layoutUtilsService.viewTask(taskId);
   }
 
   editTask(taskId: number) {
-    const params = {
-      Action: 'Edit',
-      Button: 'Edit',
-      UserId: taskId,
-    };
-    const dialogRef = this.layoutUtilsService.editTask(params);
-    dialogRef.afterClosed().subscribe((res) => {
-      if (!res) return;
-      this.toastr.success('Task Updated Successfully');
+    this.layoutUtilsService.editTask(taskId, () => {
       this.loadMyTask();
     });
   }

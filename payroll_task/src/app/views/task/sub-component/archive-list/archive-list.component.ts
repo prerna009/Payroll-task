@@ -37,7 +37,6 @@ export class ArchiveListComponent implements OnInit, AfterViewInit {
   constructor(
     private taskService: TaskService,
     private layoutUtilsService: LayoutUtilsService,
-    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -69,24 +68,9 @@ export class ArchiveListComponent implements OnInit, AfterViewInit {
     this.loadArchiveList();
   }
 
-  unarchiveTask(Id: number) {
-    const title = 'UNARCHIVE TASK';
-    const message = 'Do you want to unarchive this Task?';
-    const waitMessage = 'Task is unarchiving...';
-    const dialogRef = this.layoutUtilsService.confirmElement(title, message, waitMessage);
-  
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.taskService.archiveTask(Id, false).subscribe({
-          next: () => {
-            this.toastr.success('Task Unarchived Successfully');
-            this.loadArchiveList();
-          },
-          error: () => {
-            this.toastr.error('Something went wrong while deleting.');
-          }
-        });
-      }
+  unarchiveTask(taskId: number) {
+    this.layoutUtilsService.unarchiveTask(taskId, () => {
+      this.loadArchiveList(); 
     });
   }
 }

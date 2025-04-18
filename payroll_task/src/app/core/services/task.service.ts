@@ -188,12 +188,12 @@ export class TaskService {
       );
   }
 
-  removeOwnerTask(taskId: string, removeList: any[]) {
-    return this.http.post(`/api/task/removeOwner`, { taskId, removeList });
+  removeOwnerTask(Id: string, TaskOwners: any[]) {
+    return this.http.post(`/api/task/RemoveOwnersFromExistingTask`, { Id, TaskOwners });
   }
 
-  removeUsersExistingTask(taskId: string, removeList: any[]) {
-    return this.http.post(`/api/task/removeUsers`, { taskId, removeList });
+  removeUsersExistingTask(Id: string, UserIds: any[]) {
+    return this.http.post(`/api/task/RemoveOwnersFromExistingTask`, { Id, UserIds });
   }
 
   getName(name: any): any {

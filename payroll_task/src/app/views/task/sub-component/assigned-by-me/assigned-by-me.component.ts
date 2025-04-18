@@ -38,7 +38,6 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit {
   constructor(
     private taskService: TaskService,
     private layoutUtilsService: LayoutUtilsService,
-    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -70,50 +69,12 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit {
     this.dataSource.loadAssignedByMe(this.assignedByMeData);
   }
 
-  deleteTask(Id: number) {
-    const title = 'DELETE TASK';
-    const message = 'Do you want to delete this Task?';
-    const waitMessage = 'Task is deleting...';
-    const dialogRef = this.layoutUtilsService.deleteElement(
-      title,
-      message,
-      waitMessage
-    );
-
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.taskService.deleteTask(Id).subscribe({
-          next: () => {
-            this.toastr.success('Task Deleted Successfully');
-            this.loadAssignedByMe();
-          },
-          error: () => {
-            this.toastr.error('Something went wrong while deleting.');
-          },
-        });
-      }
-    });
+  deleteTask(taskId: number) {
+    this.layoutUtilsService.deleteTask(taskId, () => this.loadAssignedByMe());
   }
 
-  archiveTask(Id: number) {
-    const title = 'ARCHIVE TASK';
-    const message = 'Do you want to archive this Task?';
-    const waitMessage = 'Task is archiving...';
-    const dialogRef = this.layoutUtilsService.confirmElement(title, message, waitMessage);
-  
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.taskService.archiveTask(Id, true).subscribe({
-          next: () => {
-            this.toastr.success('Task Archived Successfully');
-            this.loadAssignedByMe();
-          },
-          error: () => {
-            this.toastr.error('Something went wrong while deleting.');
-          }
-        });
-      }
-    });
+  archiveTask(taskId: number) {
+    this.layoutUtilsService.archiveTask(taskId, () => this.loadAssignedByMe());
   }
 
   viewTaskCoverage(taskId: number){
@@ -121,16 +82,8 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit {
   }
 
   editTask(taskId: number) {
-    const params = {
-      Action: 'Edit',
-      Button: 'Edit',
-      UserId: taskId,
-    };
-    const dialogRef = this.layoutUtilsService.editTask(params);
-    dialogRef.afterClosed().subscribe((res) => {
-      if (!res) return;
-      this.toastr.success('Task Updated Successfully');
-      this.loadAssignedByMe();
+    this.layoutUtilsService.editTask(taskId, () => {
+      this.loadAssignedByMe(); 
     });
   }
 }

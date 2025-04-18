@@ -10,16 +10,14 @@ import { map } from 'rxjs';
 })
 export class AddUsersDialogComponent implements OnInit {
   memberList: any[] = [];
-  viewLoading: boolean = false;
-  totalRecords: number = 0;
-  noRecords: boolean = false;
   userIds: any[] = [];
   removeUserList: any[] = [];
+  removeUserDetails: any[] = [];
+  viewLoading: boolean = false;
+  noRecords: boolean = false;
   showRemoveUser: boolean = false;
   addRemove: boolean = false;
-  removeUserDetails: any[] = [];
-  previousFromRow: number = 1;
-  previousToRow: number = 10;
+  totalRecords: number = 0;
   lastRowIndex: number = 0;
 
   constructor(
@@ -31,30 +29,26 @@ export class AddUsersDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data?.usersData) {
+    if (this.data.usersData) {
       this.showRemoveUser = true;
       this.removeUserDetails = this.data.usersData;
-      console.log(this.removeUserDetails);
-    } else if (this.data?.usersIds?.length > 0) {
+    } else if (this.data.usersIds?.length > 0) {
       this.addRemove = true;
+      if (this.data.controlname === 'UserIds') {
+        this.userIds = this.data.usersIds.map((id: number) => ({ UserId: id }));
+      } else if (this.data.controlname === 'TaskOwner') {
+        this.userIds = [...this.data.usersIds]; 
+      }
     }
-    this.previousFromRow = 1;
-    this.previousToRow = 10;
-    this.getMembersList(this.previousFromRow, this.previousToRow, '');
+    this.getMembersList(1, 100, '');
   }
 
   getMembersList(from: number, to: number, searchText: string): void {
-    this.viewLoading = true;
     this.taskService
       .getCompanyMembers(from, to, searchText)
       .pipe(
         map((res) => {
-          const members = res.data.Members || [];
-          if (from === 1) {
-            this.memberList = members;
-          } else {
-            this.memberList = [...this.memberList, ...members];
-          }
+          Array.prototype.push.apply(this.memberList, res.data.Members);
           this.totalRecords = res.data.TotalRecords;
           this.lastRowIndex = this.memberList.length;
           this.viewLoading = false;
@@ -64,59 +58,58 @@ export class AddUsersDialogComponent implements OnInit {
       .subscribe();
   }
 
-  onscroll(event: any): void {
-    const pos = event.target.scrollTop + event.target.offsetHeight;
-    const max = event.target.scrollHeight;
-
-    if (pos >= max && this.lastRowIndex < this.totalRecords) {
-      this.previousFromRow += 10;
-      this.previousToRow += 10;
-      this.getMembersList(this.previousFromRow, this.previousToRow, '');
-    }
-  }
-
   searchMember(searchValue: string): void {
     this.viewLoading = true;
     this.taskService
-      .getCompanyMembers(1, this.totalRecords || 100, searchValue)
+      .getCompanyMembers(1, this.totalRecords, searchValue)
       .pipe(
         map((res) => {
           this.memberList = res.data.Members || [];
-          this.noRecords = this.memberList.length === 0;
-          this.markSelectedMembers();
+          this.noRecords = !this.memberList.length;
           this.viewLoading = false;
+          this.markSelectedMembers();
         })
       )
       .subscribe();
   }
 
   checkedMember(event: any, userId: number, memberName: string): void {
-    if (event.isChecked) {
-      if (this.showRemoveUser) {
-        if (this.data.Action === 'Owner') {
-          this.removeUserList.push({ UserId: userId });
-        } else {
-          this.removeUserList.push(userId);
-        }
+    const isChecked = event.checked;
+
+    if (this.showRemoveUser) {
+      const entry = this.data.Action === 'Owner' ? { UserId: userId } : userId;
+      if (isChecked) {
+        const alreadyExists = this.removeUserList.some((x: any) =>
+          typeof x === 'object' ? x.UserId === userId : x === userId
+        );
+        if (!alreadyExists) this.removeUserList.push(entry);
       } else {
-        const params = { UserId: userId, Name: memberName };
-        this.userIds.push(params);
-      }
-    } else {
-      if (this.showRemoveUser) {
         const index = this.removeUserList.findIndex((x: any) =>
           typeof x === 'object' ? x.UserId === userId : x === userId
         );
         if (index !== -1) this.removeUserList.splice(index, 1);
-      } else {
-        const index = this.userIds.findIndex((x) => x.UserId === userId);
-        if (index > -1) this.userIds.splice(index, 1);
       }
+      return;
     }
-    const member = this.memberList.find((m) => m.UserId === userId);
-    if (member) {
-      member.isChecked = event.isChecked;
+
+    if (isChecked) {
+      const alreadyExists = this.userIds.some((u: any) => u.UserId === userId);
+      if (!alreadyExists) {
+        this.userIds.push({ UserId: userId, Name: memberName });
+      }
+    } else {
+      const index = this.userIds.findIndex((x: any) => x.UserId === userId);
+      if (index !== -1) this.userIds.splice(index, 1);
     }
+  }
+
+  markSelectedMembers(): void {
+    this.memberList.forEach((member) => {
+      const isAlreadySelected = this.userIds.some(
+        (u: any) => u.UserId === member.UserId
+      );
+      member.isChecked = isAlreadySelected;
+    });
   }
 
   onSubmit(): void {
@@ -135,36 +128,12 @@ export class AddUsersDialogComponent implements OnInit {
       action
         .pipe(
           map((res: any) => {
-            if (res?.Status === 200) {
-              this.dialogRef.close({ isEdit: true });
-            }
+            if (res.Status === 200) this.dialogRef.close({ isEdit: true });
           })
         )
         .subscribe();
     } else {
       this.dialogRef.close({ members: this.userIds, isEdit: true });
-    }
-  }
-
-  markSelectedMembers(): void {
-    this.userIds = [];
-    if (this.data.controlname === 'UserIds') {
-      this.memberList?.forEach((member: any) => {
-        if (this.data.usersIds.includes(member.UserId)) {
-          member.isChecked = true;
-          this.userIds.push({ UserId: member.UserId, Name: member.Name });
-        }
-      });
-    } else if (this.data.controlname === 'TaskOwner') {
-      this.memberList.forEach((member) => {
-        const matched = this.data.usersIds.find(
-          (x: any) => x.UserId === member.UserId
-        );
-        if (matched) {
-          member.isChecked = true;
-        }
-      });
-      this.userIds = [...this.data.usersIds];
     }
   }
 
