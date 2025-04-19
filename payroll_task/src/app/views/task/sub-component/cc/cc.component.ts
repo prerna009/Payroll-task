@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -17,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './cc.component.html',
   styleUrl: './cc.component.scss',
 })
-export class CcComponent implements OnInit, AfterViewInit {
+export class CcComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;
   tasks = [
     'Title',
@@ -81,5 +82,9 @@ export class CcComponent implements OnInit, AfterViewInit {
     this.layoutUtilsService.editTask(taskId, () => {
       this.loadMyCC(); 
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -17,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './archive-list.component.html',
   styleUrl: './archive-list.component.scss',
 })
-export class ArchiveListComponent implements OnInit, AfterViewInit {
+export class ArchiveListComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;
   tasks = [
     'Title',
@@ -72,5 +73,9 @@ export class ArchiveListComponent implements OnInit, AfterViewInit {
     this.layoutUtilsService.unarchiveTask(taskId, () => {
       this.loadArchiveList(); 
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

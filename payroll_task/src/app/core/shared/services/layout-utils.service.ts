@@ -14,18 +14,16 @@ import { ToastrService } from 'ngx-toastr';
 export class LayoutUtilsService {
   constructor(private dialog: MatDialog, private taskService: TaskService, private authService: AuthService, private toastr: ToastrService) {}
 
-  deleteTask(taskId: number, onSuccess: () => void) {
-    const title = 'DELETE TASK';
-    const message = 'Do you want to delete this Task?';
-    const waitMessage = 'Task is deleting...';
-    const confirmedBtn = 'Delete';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+  private openConfirmationDialog(title: string, message: string, waitMessage: string, confirmedBtn: string = 'Yes') {
+    return this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data: { title, message, waitMessage, confirmedBtn },
-    });
+    }).afterClosed();
+  }
 
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
+  deleteTask(taskId: number, onSuccess: () => void) {
+    this.openConfirmationDialog('DELETE TASK', 'Do you want to delete this Task?', 'Task is deleting...', 'Delete').subscribe((res) => {
+      if(res) {
         this.taskService.deleteTask(taskId).subscribe({
           next: () => {
             this.toastr.success('Task Deleted Successfully');
@@ -34,23 +32,14 @@ export class LayoutUtilsService {
           error: () => {
             this.toastr.error('Something went wrong while deleting.');
           }
-        });
+        })
       }
     });
   }
 
   archiveTask(taskId: number, onSuccess: () => void) {
-    const title = 'ARCHIVE TASK';
-    const message = 'Do you want to archive this Task?';
-    const waitMessage = 'Task is archiving...';
-    const confirmedBtn = 'Yes';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: { title, message, waitMessage, confirmedBtn },
-    });
-
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
+    this.openConfirmationDialog('ARCHIVE TASK', 'Do you want to archive this Task?', 'Task is archiving...').subscribe((res) => {
+      if(res) {
         this.taskService.archiveTask(taskId, true).subscribe({
           next: () => {
             this.toastr.success('Task Archived Successfully');
@@ -59,7 +48,7 @@ export class LayoutUtilsService {
           error: () => {
             this.toastr.error('Something went wrong while archiving.');
           }
-        });
+        })
       }
     });
   }
@@ -77,18 +66,9 @@ export class LayoutUtilsService {
   }
 
   completeTask(taskId: number, onSuccess: () => void) {
-    const title = 'COMPLETE TASK';
-    const message = 'Are you sure this Task is complete?';
-    const waitMessage = 'Task is updating...';
-    const confirmedBtn = 'Yes';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: { title, message, waitMessage, confirmedBtn },
-    });
-
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
-        this.taskService.updateTaskStatus(taskId, 100).subscribe({
+    this.openConfirmationDialog('COMPLETE TASK', 'Are you sure this Task is complete?', 'Task is updating...').subscribe((res) => {
+      if(res) {
+        this.taskService.deleteTask(taskId).subscribe({
           next: () => {
             this.toastr.success('Task Completed Successfully');
             onSuccess();
@@ -96,7 +76,7 @@ export class LayoutUtilsService {
           error: () => {
             this.toastr.error('Something went wrong while completing.');
           }
-        });
+        })
       }
     });
   }
@@ -115,26 +95,17 @@ export class LayoutUtilsService {
   }
 
   unarchiveTask(Id: number, onSuccess: () => void) {
-    const title = 'UNARCHIVE TASK';
-    const message = 'Do you want to unarchive this Task?';
-    const waitMessage = 'Task is unarchiving...';
-    const confirmedBtn = 'Yes';
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: { title, message, waitMessage, confirmedBtn },
-    });
-  
-    dialogRef.afterClosed().subscribe((res) => {
-      if (res) {
+    this.openConfirmationDialog('UNARCHIVE TASK', 'Do you want to unarchive this Task?', 'Task is unarchiving...').subscribe((res) => {
+      if(res) {
         this.taskService.archiveTask(Id, false).subscribe({
           next: () => {
             this.toastr.success('Task Unarchived Successfully');
             onSuccess();
           },
           error: () => {
-            this.toastr.error('Something went wrong while deleting.');
+            this.toastr.error('Something went wrong while unarchiving.');
           }
-        });
+        })
       }
     });
   }
@@ -152,19 +123,11 @@ export class LayoutUtilsService {
       const currentUserId = this.authService.getUserId();
       const userData = taskDetails.AssignedToUserIds;
 
-      let selectedIndex = 0;
-      let tabDisable = false;
+      const isMultipleUsers = userData.length > 1;
+      const isCurrentUserAssigned = userData.includes(currentUserId);
 
-      if (
-        (userData.includes(currentUserId) && userData.length > 1) ||
-        (!userData.includes(currentUserId) && userData.length >= 1)
-      ) {
-        selectedIndex = 0;
-        tabDisable = false;
-      } else {
-        selectedIndex = 1;
-        tabDisable = true;
-      }
+      const selectedIndex = (!isCurrentUserAssigned || isMultipleUsers) ? 0 : 1;
+      const tabDisable = !isMultipleUsers && isCurrentUserAssigned ? true : false;
 
       const dialogRef = this.dialog.open(AddTaskDialogComponent, {
         width: '500px',

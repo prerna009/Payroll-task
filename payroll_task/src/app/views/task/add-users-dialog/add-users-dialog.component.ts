@@ -36,7 +36,7 @@ export class AddUsersDialogComponent implements OnInit {
       this.addRemove = true;
       if (this.data.controlname === 'UserIds') {
         this.userIds = this.data.usersIds.map((id: number) => ({ UserId: id }));
-      } else if (this.data.controlname === 'TaskOwner') {
+      } else if (this.data.controlname === 'TaskOwners') {
         this.userIds = [...this.data.usersIds]; 
       }
     }

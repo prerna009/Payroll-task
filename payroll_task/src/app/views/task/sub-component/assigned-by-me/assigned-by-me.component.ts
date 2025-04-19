@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -17,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './assigned-by-me.component.html',
   styleUrl: './assigned-by-me.component.scss',
 })
-export class AssignedByMeComponent implements OnInit, AfterViewInit {
+export class AssignedByMeComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;
   tasks = [
     'Title',
@@ -85,5 +86,9 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit {
     this.layoutUtilsService.editTask(taskId, () => {
       this.loadAssignedByMe(); 
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

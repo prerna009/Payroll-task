@@ -16,28 +16,24 @@ export class AuthService {
   );
   username$ = this.usernameSubject.asObservable();
 
-  private userIdSubject = new BehaviorSubject<number | null>(null);
+  private userIdSubject = new BehaviorSubject<number | null>(
+    this.getDecodedUserIdFromToken()
+  );
   userId$ = this.userIdSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    const token = sessionStorage.getItem('referralToken');
-    if (token) {
-      this.setUserId(token);
-    }
-  }
+  constructor(private http: HttpClient) {}
 
   login(data: any) {
     return this.http.post('api/account/authenticate', data);
   }
 
   isAuthenticated(): boolean {
-    return (
-      typeof window !== 'undefined' && !!sessionStorage.getItem('authToken')
-    );
+    return typeof window !== 'undefined' && !!sessionStorage.getItem('authToken');
   }
 
   setUsername(name: string): void {
-    if (name !== sessionStorage.getItem('username')) {
+    const currentUsername = this.usernameSubject.getValue();
+    if (name !== currentUsername) {
       this.usernameSubject.next(name);
       sessionStorage.setItem('username', name);
     }
@@ -47,21 +43,28 @@ export class AuthService {
     return sessionStorage.getItem('username');
   }
 
+  private getDecodedUserIdFromToken(): number | null {
+    const token = sessionStorage.getItem('referralToken');
+    if (!token) return null;
+
+    try {
+      const decoded: DecodedToken = jwtDecode(token);
+      const currentId = parseInt(decoded.UserId, 10);
+      return !isNaN(currentId) ? currentId : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
   setUserId(token: string | null) {
     if (!token) {
       this.userIdSubject.next(null);
       return;
     }
 
-    try {
-      const decoded: DecodedToken = jwtDecode(token);
-      const currentId = parseInt(decoded.UserId, 10);
-
-      if (!isNaN(currentId) && currentId !== this.userIdSubject.getValue()) {
-        this.userIdSubject.next(currentId);
-      }
-    } catch (error) {
-      this.userIdSubject.next(null);
+    const decodedUserId = this.getDecodedUserIdFromToken();
+    if (decodedUserId !== null && decodedUserId !== this.userIdSubject.getValue()) {
+      this.userIdSubject.next(decodedUserId);
     }
   }
 

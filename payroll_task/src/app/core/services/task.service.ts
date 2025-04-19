@@ -7,204 +7,117 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class TaskService {
-  load = new BehaviorSubject<boolean>(false);
-  load$ = this.load.asObservable();
+  loadSubject = new BehaviorSubject<boolean>(false);
+  load$ = this.loadSubject.asObservable();
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  getDefaultTaskParams() {
+  private createParams(data: any, extraParams: any = {}) {
     return {
-      from: 1,
-      to: 10,
-      title: '',
-      userId: this.authService.getUserId() || 0,
-      isArchive: false,
-      userIds: [],
-      priority: '',
-      statusIds: '',
-      fromDate: '',
-      toDate: '',
-      sortColumn: '',
-      sortOrder: '',
-    };
-  }
-
-  getMyTask(data: any) {
-    const params = {
       From: data.from,
       To: data.to,
       Title: data.title,
-      UserId: data.userId,
-      IsArchive: data.isArchive,
-      UserIds: data.userIds,
-      Priority: data.priority,
-      TaskStatus: data.StatusIds,
-      FromDueDate: data.FromDate,
-      ToDueDate: data.ToDate,
-      SortByDueDate: '',
-      SortColumn: data.SortColumn,
-      SortOrder: data.SortOrder,
+      UserId: data.userId || this.authService.getUserId() || 0,
+      IsArchive: data.isArchive || false,
+      UserIds: data.userIds || [],
+      Priority: data.priority || '',
+      TaskStatus: data.StatusIds || '',
+      FromDueDate: data.FromDate || '',
+      ToDueDate: data.ToDate || '',
+      SortByDueDate: data.SortByDueDate || '',
+      SortColumn: data.SortColumn || '',
+      SortOrder: data.SortOrder || '',
+      ...extraParams,
     };
-    return this.http
-      .post('api/Task/UserTasksAssignedToMe', params)
-      .pipe(map((res) => res));
   }
 
-  getCC(data: any) {
-    const params = {
-      From: data.from,
-      To: data.to,
-      Title: data.title,
-      UserId: data.userId,
-      IsArchive: data.isArchive,
-      UserIds: data.userIds,
-      TaskStatus: data.StatusIds,
-      Priority: data.priority,
-    };
-
-    return this.http
-      .post('api/Task/OwnerTasks', params)
-      .pipe(map((res) => res));
+  getDefaultTaskParams() {
+    return this.createParams({ from: 1, to: 10, title: '' });
   }
 
-  getAssignedByMeTask(data: any) {
-    const params = {
-      From: data.from,
-      To: data.to,
-      Title: data.title,
-      UserId: data.userId,
-      IsArchive: data.isArchive,
-      UserIds: data.userIds,
-      Priority: data.priority,
-      TaskStatus: data.StatusIds,
-      FromDueDate: data.FromDate,
-      ToDueDate: data.ToDate,
-      SortByDueDate: '',
-    };
-
-    return this.http
-      .post('api/Task/UserTasksAssignedByMe', params)
-      .pipe(map((res) => res));
+  getMyTask(data: any): Observable<any> {
+    const params = this.createParams(data);
+    return this.http.post('api/Task/UserTasksAssignedToMe', params);
   }
 
-  getArchiveListTask(data: any) {
-    const params = {
-      From: data.from,
-      To: data.to,
-      Title: data.title,
-      UserId: data.userId,
-      IsArchive: true,
-      UserIds: data.userIds,
-    };
+  getCC(data: any): Observable<any> {
+    const params = this.createParams(data);
+    return this.http.post('api/Task/OwnerTasks', params);
+  }
 
-    return this.http
-      .post('api/Task/UserTasksAssignedByMe', params)
-      .pipe(map((res) => res));
+  getAssignedByMeTask(data: any): Observable<any> {
+    const params = this.createParams(data);
+    return this.http.post('api/Task/UserTasksAssignedByMe', params);
+  }
+
+  getArchiveListTask(data: any): Observable<any> {
+    const params = this.createParams(data, { IsArchive: true });
+    return this.http.post('api/Task/UserTasksAssignedByMe', params);
   }
 
   deleteTask(taskId: number): Observable<any> {
-    return this.http
-      .get('api/Task/DeleteTask?taskId=' + taskId)
-      .pipe(map((res) => res));
+    return this.http.get(`api/Task/DeleteTask?taskId=${taskId}`);
   }
 
   archiveTask(taskId: number, isArchive: boolean): Observable<any> {
-    const params = {
-      IsArchive: isArchive,
-      TaskId: taskId,
-    };
-    return this.http.post('api/Task/Archive', params).pipe(map((res) => res));
+    const params = { IsArchive: isArchive, TaskId: taskId };
+    return this.http.post('api/Task/Archive', params);
   }
 
   updateTaskStatus(taskId: number, statusIds: number): Observable<any> {
-    const params = {
-      TaskId: taskId,
-      TaskStatusValue: statusIds,
-    };
-    return this.http
-      .post('api/Task/UpdateTaskStatus', params)
-      .pipe(map((res) => res));
+    const params = { TaskId: taskId, TaskStatusValue: statusIds };
+    return this.http.post('api/Task/UpdateTaskStatus', params);
   }
 
   getPartialTaskStatus(): Observable<any> {
-    return this.http
-      .get<any>('api/Task/UserTaskStatusMaster')
-      .pipe(map((res) => res));
+    return this.http.get<any>('api/Task/UserTaskStatusMaster');
   }
 
   getViewTask(taskId: number): Observable<any> {
-    return this.http
-      .get<any>('api/Task/StatusReport?taskId=' + taskId)
-      .pipe(map((res) => res));
+    return this.http.get<any>(`api/Task/StatusReport?taskId=${taskId}`);
   }
 
   getTaskDetails(userId: any): Observable<any> {
-    return this.http
-      .get<any>('api/Task/UserTaskDetails?taskId=' + userId)
-      .pipe(map((res) => res));
+    return this.http.get<any>(`api/Task/UserTaskDetails?taskId=${userId}`);
   }
 
   getCustomerList(params: any): Observable<any> {
-    return this.http.post('api/CRM/Leads', params).pipe(map((res) => res));
+    return this.http.post('api/CRM/Leads', params);
   }
 
   updateOwnerTask(taskId: number, taskOwners: any): Observable<any> {
-    const params = {
-      Id: taskId,
-      TaskOwners: taskOwners,
-    };
-    return this.http
-      .post('api/Task/AddOwnersToTask', params)
-      .pipe(map((res) => res));
+    const params = { Id: taskId, TaskOwners: taskOwners };
+    return this.http.post('api/Task/AddOwnersToTask', params);
   }
 
-  addUsersExistingTask(taskId: number, taskOwners: any): Observable<any> {
-    const params = {
-      Id: taskId,
-      IntercomGroupIds: [],
-      UserIds: taskOwners,
-    };
-    return this.http
-      .post('api/Task/AddUsersToExistingTask', params)
-      .pipe(map((res) => res));
+  addUsersExistingTask(taskId: number, userIds: any): Observable<any> {
+    const params = { Id: taskId, IntercomGroupIds: [], UserIds: userIds };
+    return this.http.post('api/Task/AddUsersToExistingTask', params);
   }
 
   addTask(taskDetails: any): Observable<any> {
-    return this.http
-      .post('api/Task/AssignTask', taskDetails)
-      .pipe(map((res) => res));
+    return this.http.post('api/Task/AssignTask', taskDetails);
   }
 
   updateTask(taskDetails: any): Observable<any> {
-    return this.http
-      .post('api/Task/UpdateTaskDetails', taskDetails)
-      .pipe(map((res) => res));
+    return this.http.post('api/Task/UpdateTaskDetails', taskDetails);
   }
 
-  getCompanyMembers(from:any, to:any, text:any): Observable<any> {
-    return this.http.get('api/CompanyMembers?from=' + from + '&text=' + text + '&to=' + to)
-      .pipe(
-        map(res => res)
-      );
+  getCompanyMembers(from: any, to: any, text: any): Observable<any> {
+    return this.http.get(`api/CompanyMembers?from=${from}&text=${text}&to=${to}`);
   }
 
-  removeOwnerTask(Id: string, TaskOwners: any[]) {
-    return this.http.post(`/api/task/RemoveOwnersFromExistingTask`, { Id, TaskOwners });
+  removeOwnerTask(Id: string, TaskOwners: any[]): Observable<any> {
+    return this.http.post(`/api/Task/RemoveOwnersFromExistingTask`, { Id, TaskOwners });
   }
 
-  removeUsersExistingTask(Id: string, UserIds: any[]) {
-    return this.http.post(`/api/task/RemoveOwnersFromExistingTask`, { Id, UserIds });
+  removeUsersExistingTask(Id: string, UserIds: any[]): Observable<any> {
+    return this.http.post(`/api/Task/RemoveUsersFromExistingTask`, { Id, UserIds });
   }
 
-  getName(name: any): any {
-    let filename = /[^/]*$/.exec(name);
-    let updated_name = filename && filename.length ? filename[0] : '';
-    return updated_name;
-  }
-  getExtension(extention: any): any {
-    let fileextention = /[^.]*$/.exec(extention);
-    let updated_fileExtention =
-      fileextention && fileextention.length ? fileextention[0] : '';
-    return updated_fileExtention;
+  getFileInfo(filePath: string): { name: string, extension: string } {
+    const name = /[^/]*$/.exec(filePath)?.[0] || '';
+    const extension = /[^.]*$/.exec(filePath)?.[0] || '';
+    return { name, extension };
   }
 }

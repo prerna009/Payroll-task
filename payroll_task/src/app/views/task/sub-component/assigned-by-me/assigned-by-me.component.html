@@ -45,17 +45,17 @@
         <td mat-cell *matCellDef="let mytask">
             <button (click)="archiveTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Archive"
                 type="button"
-                [ngStyle]="{'visibility' : (assignedByMeData.userId === mytask.AssignedByUserId && !mytask.IsArchive) ? 'visible' : 'hidden'}">
+                [ngStyle]="{'visibility' : (assignedByMeData.UserId === mytask.AssignedByUserId && !mytask.IsArchive) ? 'visible' : 'hidden'}">
                 <img class="action-btn" src="../../../../../assets/media/TaskArchive.svg">
             </button>&nbsp;
             <button (click)="viewTaskCoverage(mytask.TaskId)" mat-icon-button color="primary" matTooltip="View Task Coverage"
                 type="button"
-                [ngStyle]="{'visibility' : (assignedByMeData.userId === mytask.AssignedByUserId) ? 'visible' : 'hidden'}">
+                [ngStyle]="{'visibility' : (assignedByMeData.UserId === mytask.AssignedByUserId) ? 'visible' : 'hidden'}">
                 <img class="action-btn" src="../../../../../assets/media/TaskViewTaskCoverage.svg">
             </button>&nbsp;
             <button (click)="deleteTask(mytask.TaskId)" mat-icon-button color="primary" matTooltip="Delete"
                 type="button"
-                [ngStyle]="{'visibility' : (assignedByMeData.userId === mytask.AssignedByUserId) ? 'visible' : 'hidden'}">
+                [ngStyle]="{'visibility' : (assignedByMeData.UserId === mytask.AssignedByUserId) ? 'visible' : 'hidden'}">
                 <img class="action-btn" src="../../../../../assets/media/TaskDelete.svg">
             </button>&nbsp;
         </td>

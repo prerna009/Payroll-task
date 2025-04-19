@@ -2,7 +2,7 @@
     {{data.Action}} Task
 </h2>
 <mat-dialog-content>
-    <mat-tab-group [(selectedIndex)]="selectedIndex">
+    <mat-tab-group [(selectedIndex)]="selectedIndex" (selectedTabChange)="onTabChange()">
         <mat-tab [disabled]="data.Action === 'Edit' && tabDisable">
             <ng-template matTabLabel>
                 Assign To Others

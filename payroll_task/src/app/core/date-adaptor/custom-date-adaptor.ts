@@ -4,14 +4,10 @@ import { NativeDateAdapter } from '@angular/material/core';
 @Injectable()
 export class CustomDateAdaptor extends NativeDateAdapter {
   override format(date: Date): string {
-    const day = this._to2digit(date.getDate());
+    const day = date.getDate().toString().padStart(2, '0');
     const month = date.toLocaleString('default', { month: 'short' }); 
     const year = date.getFullYear();
     return `${day} ${month}, ${year}`;
-  }
-
-  private _to2digit(n: number): string {
-    return n < 10 ? '0' + n : n.toString();
   }
 }
 

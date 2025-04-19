@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -10,15 +11,12 @@ import { TaskDataSource } from '../../../../core/datasource/task.datasource';
 import { TaskService } from '../../../../core/services/task.service';
 import { merge, Subscription, tap } from 'rxjs';
 import { LayoutUtilsService } from '../../../../core/shared/services/layout-utils.service';
-import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../../../core/services/auth.service';
-
 @Component({
   selector: 'app-my-task',
   templateUrl: './my-task.component.html',
   styleUrl: './my-task.component.scss',
 })
-export class MyTaskComponent implements OnInit, AfterViewInit {
+export class MyTaskComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;
   tasks = [
     'Title',
@@ -46,6 +44,11 @@ export class MyTaskComponent implements OnInit, AfterViewInit {
 
     this.dataSource = new TaskDataSource(this.taskService);
     this.loadMyTask();
+    this.taskService.loadSubject.subscribe(res=> {
+      if(res) {
+        this.loadMyTask();
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -99,5 +102,9 @@ export class MyTaskComponent implements OnInit, AfterViewInit {
     this.layoutUtilsService.editTask(taskId, () => {
       this.loadMyTask();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }
