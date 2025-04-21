@@ -64,9 +64,6 @@
 <div *ngIf="(dataSource.tasks$ | async)?.length === 0 && !(dataSource.loading$ | async)">
     No records found
 </div>
-<div *ngIf="dataSource.loading$ | async">
-    <mat-spinner [diameter]="20">Please wait...</mat-spinner>
-</div>
 <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 15, 25]"
     [length]="dataSource.paginatorTotal$ | async" [showFirstLastButtons]="true">
 </mat-paginator>
