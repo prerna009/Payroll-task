@@ -7,6 +7,7 @@ import { map } from 'rxjs';
   selector: 'app-view-task-coverage',
   templateUrl: './view-task-coverage.component.html',
   styleUrl: './view-task-coverage.component.scss',
+  standalone: false
 })
 export class ViewTaskCoverageComponent {
   taskCoverage: any = [];

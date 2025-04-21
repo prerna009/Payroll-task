@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   selector: 'app-partial-complete-status',
   templateUrl: './partial-complete-status.component.html',
   styleUrl: './partial-complete-status.component.scss',
+  standalone: false
 })
 export class PartialCompleteStatusComponent implements OnInit {
   partialData: any[] = [];

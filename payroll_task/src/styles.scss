@@ -10,19 +10,26 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.custom-spinner-size .la-ball-clip-rotate>div {
+    width: 50px !important;
+    height: 50px !important;
+    border-width: 6px !important;
+}
+
 .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     background-color: transparent !important;
 }
 
-.title-edit{
+.title-edit {
     color: #5d78ff;
     cursor: pointer;
 }
 
-.mat-mdc-table, mat-paginator{
+.mat-mdc-table,
+mat-paginator {
     background-color: white !important;
 }
 
-.action-btn{
+.action-btn {
     height: 20px !important;
 }

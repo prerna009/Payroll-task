@@ -17,6 +17,8 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { CUSTOM_DATE_FORMATS, CustomDateAdaptor } from './core/date-adaptor/custom-date-adaptor';
+import { NgxSpinnerModule } from "ngx-spinner";
+import { loaderInterceptor } from './core/interceptors/loader.interceptor';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent],
@@ -26,10 +28,11 @@ import { CUSTOM_DATE_FORMATS, CustomDateAdaptor } from './core/date-adaptor/cust
     ToastrModule.forRoot(),
     ReactiveFormsModule,
     SharedModule,
+    NgxSpinnerModule.forRoot()
   ],
   providers: [
     provideAnimationsAsync(),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, loaderInterceptor])),
     { provide: DateAdapter, useClass: CustomDateAdaptor },
     { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS },
     DatePipe,

@@ -21,13 +21,15 @@ import { map } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { AddUsersDialogComponent } from '../add-users-dialog/add-users-dialog.component';
 import { DatePipe } from '@angular/common';
+import { canComponentDeactivate } from '../../../core/guards/unsaved-alert.guard';
 
 @Component({
   selector: 'app-add-task-dialog',
   templateUrl: './add-task-dialog.component.html',
   styleUrl: './add-task-dialog.component.scss',
+  standalone: false
 })
-export class AddTaskDialogComponent implements OnInit {
+export class AddTaskDialogComponent implements OnInit, canComponentDeactivate {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   addTaskForm!: FormGroup;
   displayFileName: string = '';
@@ -111,7 +113,7 @@ export class AddTaskDialogComponent implements OnInit {
       TaskEndDate: [''],
       TaskDisplayOwners: [''],
       TaskOwners: [''],
-      Title: ['', Validators.required],
+      Title: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
       UserDisplayIds: ['', Validators.required],
       UserIds: [''],
       LeadId: [''],
@@ -314,6 +316,10 @@ export class AddTaskDialogComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.addTaskForm.invalid) {
+      this.addTaskForm.markAllAsTouched(); 
+      return;
+    }  
     const controls = this.addTaskForm.controls;
 
     if (this.selectedIndex === 1) {
@@ -379,5 +385,12 @@ export class AddTaskDialogComponent implements OnInit {
 
   onClick() {
     this.dialogRef.close();
+  }
+
+  canDeactivate(): boolean{
+    if(!this.addTaskForm){
+      return confirm('You have unsaved changes. Do you really want to leave?');
+    }
+    return true;
   }
 }

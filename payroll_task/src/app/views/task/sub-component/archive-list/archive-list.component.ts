@@ -17,6 +17,7 @@ import { ToastrService } from 'ngx-toastr';
   selector: 'app-archive-list',
   templateUrl: './archive-list.component.html',
   styleUrl: './archive-list.component.scss',
+  standalone: false
 })
 export class ArchiveListComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;

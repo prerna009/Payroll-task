@@ -17,6 +17,7 @@ import { ToastrService } from 'ngx-toastr';
   selector: 'app-assigned-by-me',
   templateUrl: './assigned-by-me.component.html',
   styleUrl: './assigned-by-me.component.scss',
+  standalone: false
 })
 export class AssignedByMeComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;

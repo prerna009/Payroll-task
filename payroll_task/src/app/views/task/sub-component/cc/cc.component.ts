@@ -17,6 +17,7 @@ import { ToastrService } from 'ngx-toastr';
   selector: 'app-cc',
   templateUrl: './cc.component.html',
   styleUrl: './cc.component.scss',
+  standalone: false
 })
 export class CcComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;

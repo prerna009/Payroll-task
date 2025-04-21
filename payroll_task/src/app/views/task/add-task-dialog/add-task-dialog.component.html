@@ -14,8 +14,11 @@
                             <mat-form-field appearance="fill">
                                 <mat-label>Title</mat-label>
                                 <input matInput type="text" formControlName="Title" />
-                                <mat-error>
+                                <mat-error *ngIf="addTaskForm.get('Title')?.hasError('required')">
                                     Title is required.
+                                </mat-error>
+                                <mat-error *ngIf="addTaskForm.get('Title')?.hasError('pattern')">
+                                    Title contain only alphabets.
                                 </mat-error>
                             </mat-form-field>
                         </div>
@@ -124,8 +127,11 @@
                             <mat-form-field appearance="fill">
                                 <mat-label>Title</mat-label>
                                 <input matInput type="text" formControlName="Title" />
-                                <mat-error>
+                                <mat-error *ngIf="addTaskForm.get('Title')?.hasError('required')">
                                     Title is required.
+                                </mat-error>
+                                <mat-error *ngIf="addTaskForm.get('Title')?.hasError('pattern')">
+                                    Title contain only alphabets.
                                 </mat-error>
                             </mat-form-field>
                         </div>

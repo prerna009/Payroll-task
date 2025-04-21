@@ -4,9 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { map } from 'rxjs';
 
 @Component({
-  selector: 'app-add-users-dialog',
-  templateUrl: './add-users-dialog.component.html',
-  styleUrl: './add-users-dialog.component.scss',
+    selector: 'app-add-users-dialog',
+    templateUrl: './add-users-dialog.component.html',
+    styleUrl: './add-users-dialog.component.scss',
+    standalone: false
 })
 export class AddUsersDialogComponent implements OnInit {
   memberList: any[] = [];

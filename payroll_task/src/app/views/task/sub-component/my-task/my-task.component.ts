@@ -15,6 +15,7 @@ import { LayoutUtilsService } from '../../../../core/shared/services/layout-util
   selector: 'app-my-task',
   templateUrl: './my-task.component.html',
   styleUrl: './my-task.component.scss',
+  standalone: false
 })
 export class MyTaskComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: TaskDataSource;

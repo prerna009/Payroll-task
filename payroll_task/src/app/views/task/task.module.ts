@@ -14,12 +14,20 @@ import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.compon
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { AddUsersDialogComponent } from './add-users-dialog/add-users-dialog.component';
+import { unsavedAlertGuard } from '../../core/guards/unsaved-alert.guard';
 
 const routes : Routes = [
   {
     path : '',
-    component : TaskComponent
-  }
+    component : TaskComponent,
+    children: [
+      {
+        path : 'add-task',
+        component : AddTaskDialogComponent,
+        canDeactivate : [unsavedAlertGuard]
+      }
+    ]
+  },
 ]
 
 @NgModule({
