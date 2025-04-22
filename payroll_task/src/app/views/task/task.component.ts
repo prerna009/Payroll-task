@@ -13,7 +13,6 @@ import { ToastrService } from 'ngx-toastr';
     standalone: false
 })
 export class TaskComponent implements OnInit {
-  @ViewChild('searchInput', { static: true }) searchInput: any;
   username: string | null = null;
   currentDate: Date = new Date();
   tabIndex: number = 0;

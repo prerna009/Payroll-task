@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -30,7 +29,6 @@ export class MyTaskComponent implements OnInit, AfterViewInit, OnDestroy {
     'Action',
   ];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild('searchInput') search!: ElementRef;
   subscriptions: Subscription[] = [];
   taskData: any;
 
@@ -57,12 +55,6 @@ export class MyTaskComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(tap(() => this.loadMyTask()))
       .subscribe();
     this.subscriptions.push(paginatorSubscription);
-  }
-
-  searchLoad() {
-    this.paginator.pageIndex = 0;
-    this.taskData.title = this.search.nativeElement.value.trim();
-    this.loadMyTask();
   }
 
   loadMyTask() {

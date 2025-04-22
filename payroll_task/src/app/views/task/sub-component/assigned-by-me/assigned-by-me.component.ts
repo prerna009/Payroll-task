@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -11,7 +10,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { merge, Subscription, tap } from 'rxjs';
 import { TaskService } from '../../../../core/services/task.service';
 import { LayoutUtilsService } from '../../../../core/shared/services/layout-utils.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-assigned-by-me',
@@ -32,7 +30,6 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit, OnDestroy {
     'Action'
   ];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild('searchInput') search!: ElementRef;
   subscriptions: Subscription[] = [];
 
   assignedByMeData: any;
@@ -55,12 +52,6 @@ export class AssignedByMeComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe();
 
     this.subscriptions.push(paginatorSubscription);
-  }
-
-  searchLoad() {
-    this.paginator.pageIndex = 0;
-    this.assignedByMeData.title = this.search.nativeElement.value.trim();
-    this.loadAssignedByMe();
   }
 
   loadAssignedByMe() {

@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -11,7 +10,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { TaskService } from '../../../../core/services/task.service';
 import { merge, Subscription, tap } from 'rxjs';
 import { LayoutUtilsService } from '../../../../core/shared/services/layout-utils.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-archive-list',
@@ -32,7 +30,6 @@ export class ArchiveListComponent implements OnInit, AfterViewInit, OnDestroy {
     'Action'
   ];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild('searchInput') search!: ElementRef;
   subscriptions: Subscription[] = [];
   archiveListData: any;
 
@@ -62,12 +59,6 @@ export class ArchiveListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.archiveListData.to =
       (this.paginator.pageIndex + 1) * this.paginator.pageSize;
     this.dataSource.loadArchiveList(this.archiveListData);
-  }
-
-  searchLoad() {
-    this.paginator.pageIndex = 0;
-    this.archiveListData.title = this.search.nativeElement.value.trim();
-    this.loadArchiveList();
   }
 
   unarchiveTask(taskId: number) {

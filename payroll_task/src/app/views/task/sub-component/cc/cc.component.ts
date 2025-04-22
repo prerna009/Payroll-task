@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -11,7 +10,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { merge, Subscription, tap } from 'rxjs';
 import { TaskService } from '../../../../core/services/task.service';
 import { LayoutUtilsService } from '../../../../core/shared/services/layout-utils.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cc',
@@ -32,7 +30,6 @@ export class CcComponent implements OnInit, AfterViewInit, OnDestroy {
     'Action'
   ];
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild('searchInput') search!: ElementRef;
   subscriptions: Subscription[] = [];
   ccData: any;
 
@@ -59,12 +56,6 @@ export class CcComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ccData.from = this.paginator.pageIndex * this.paginator.pageSize + 1;
     this.ccData.to = (this.paginator.pageIndex + 1) * this.paginator.pageSize;
     this.dataSource.loadCC(this.ccData);
-  }
-
-  searchLoad() {
-    this.paginator.pageIndex = 0;
-    this.ccData.title = this.search.nativeElement.value.trim();
-    this.loadMyCC();
   }
 
   deleteTask(taskId: number) {
