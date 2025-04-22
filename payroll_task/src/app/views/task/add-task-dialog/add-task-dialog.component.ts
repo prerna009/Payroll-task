@@ -1,8 +1,10 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   Inject,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import {
@@ -21,7 +23,7 @@ import { map } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { AddUsersDialogComponent } from '../add-users-dialog/add-users-dialog.component';
 import { DatePipe } from '@angular/common';
-import { canComponentDeactivate } from '../../../core/guards/unsaved-alert.guard';
+import { CanComponentDeactivate } from '../../../core/guards/unsaved-alert.guard';
 
 @Component({
   selector: 'app-add-task-dialog',
@@ -29,7 +31,7 @@ import { canComponentDeactivate } from '../../../core/guards/unsaved-alert.guard
   styleUrl: './add-task-dialog.component.scss',
   standalone: false
 })
-export class AddTaskDialogComponent implements OnInit, canComponentDeactivate {
+export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   addTaskForm!: FormGroup;
   displayFileName: string = '';
@@ -183,7 +185,7 @@ export class AddTaskDialogComponent implements OnInit, canComponentDeactivate {
         MultimediaType: file.type,
       });
     };
-    reader.readAsBinaryString(file);
+    reader.readAsDataURL(file);
   }
 
   removeFile(): void {
@@ -383,14 +385,16 @@ export class AddTaskDialogComponent implements OnInit, canComponentDeactivate {
     return count === 0 ? '' : count === 1 ? '1 User' : `${count} Users`;
   }
 
-  onClick() {
-    this.dialogRef.close();
-  }
-
-  canDeactivate(): boolean{
-    if(!this.addTaskForm){
-      return confirm('You have unsaved changes. Do you really want to leave?');
+  canDeactivate(): boolean {
+    if (this.addTaskForm.dirty) {
+      return confirm('You have unsaved form changes. Do you really want to leave?');
     }
     return true;
+  }
+
+  onClick() {
+    if (this.canDeactivate()) {
+      this.dialogRef.close();
+    }
   }
 }

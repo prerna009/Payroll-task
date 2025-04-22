@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AddTaskDialogComponent } from './add-task-dialog/add-task-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -24,7 +24,6 @@ export class TaskComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private toaster: ToastrService,
-    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -36,7 +35,6 @@ export class TaskComponent implements OnInit {
   }
 
   addTask() {
-    this.router.navigate(['add-task'], { relativeTo: this.route });
     const params = {
       Action: 'Add',
       Button: 'Add',

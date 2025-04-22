@@ -1,10 +1,17 @@
-import { CanDeactivateFn } from '@angular/router';
+// unsaved-alert.guard.ts
+import { Injectable } from '@angular/core';
+import { CanDeactivate } from '@angular/router';
 import { Observable } from 'rxjs';
 
-export interface canComponentDeactivate{
-  canDeactivate: () =>boolean | Observable<boolean> | Promise<boolean>;
+export interface CanComponentDeactivate {
+  canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
 }
 
-export const unsavedAlertGuard: CanDeactivateFn<canComponentDeactivate> = (component, currentRoute, currentState, nextState) => {
-  return component.canDeactivate ? component.canDeactivate() : true;
-};
+@Injectable({
+  providedIn: 'root'
+})
+export class UnsavedAlertGuard implements CanDeactivate<CanComponentDeactivate> {
+  canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
+    return component.canDeactivate ? component.canDeactivate() : true;
+  }
+}
