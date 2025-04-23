@@ -43,11 +43,6 @@ export class MyTaskComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataSource = new TaskDataSource(this.taskService);
     this.loadMyTask();
-    this.taskService.loadSubject.subscribe(res=> {
-      if(res) {
-        this.loadMyTask();
-      }
-    });
   }
 
   ngAfterViewInit(): void {

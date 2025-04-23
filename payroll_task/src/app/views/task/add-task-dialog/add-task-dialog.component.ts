@@ -29,7 +29,7 @@ import { CanComponentDeactivate } from '../../../core/guards/unsaved-alert.guard
   selector: 'app-add-task-dialog',
   templateUrl: './add-task-dialog.component.html',
   styleUrl: './add-task-dialog.component.scss',
-  standalone: false
+  standalone: false,
 })
 export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -110,15 +110,15 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
       MultimediaExtension: [''],
       MultimediaFileName: [''],
       MultimediaType: [''],
-      Priority: [''],
+      Priority: ['', Validators.required],
       TaskEndDateDisplay: ['', Validators.required],
       TaskEndDate: [''],
-      TaskDisplayOwners: [''],
+      TaskDisplayOwners: ['', Validators.required],
       TaskOwners: [''],
       Title: ['', [Validators.required, Validators.pattern(/^[A-Za-z ]+$/)]],
       UserDisplayIds: ['', Validators.required],
       UserIds: [''],
-      LeadId: [''],
+      LeadId: ['', Validators.required],
     });
   }
 
@@ -217,7 +217,9 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
 
   filterLeadCustomers(value: string): any[] {
     return value
-      ? this.customerList.filter((lead: any) => lead.LeadName.toLowerCase().includes(value.toLowerCase()))
+      ? this.customerList.filter((lead: any) =>
+          lead.LeadName.toLowerCase().includes(value.toLowerCase())
+        )
       : this.customerList;
   }
 
@@ -228,6 +230,7 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
 
     if (isUser) {
       controls[displayControl].clearValidators();
+      controls[displayControl].setValidators(Validators.required);
       controls[displayControl].updateValueAndValidity();
     }
 
@@ -302,43 +305,40 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
 
     dialogRef.afterClosed().subscribe((res) => {
       if (!res) return;
-      this.taskService.getTaskDetails(this.data.UserId).subscribe((response: any) => {
-        if (isOwner) {
-          this.taskOwners = response.data.TaskOwnerIds || [];
-          this.taskOwnerCount = this.taskOwners.length;
-          this.addTaskForm.controls['TaskDisplayOwners'].setValue(this.getUserLabel(this.taskOwnerCount));
-        } else {
-          this.userIds = response.data.AssignedToUserIds || [];
-          this.assignedToCount = this.userIds.length;
-          this.addTaskForm.controls['UserDisplayIds'].setValue(this.getUserLabel(this.assignedToCount));
-        }
-        this.toaster.success('User removed successfully');
-      });
+      this.taskService
+        .getTaskDetails(this.data.UserId)
+        .subscribe((response: any) => {
+          if (isOwner) {
+            this.taskOwners = response.data.TaskOwnerIds || [];
+            this.taskOwnerCount = this.taskOwners.length;
+            this.addTaskForm.controls['TaskDisplayOwners'].setValue(
+              this.getUserLabel(this.taskOwnerCount)
+            );
+          } else {
+            this.userIds = response.data.AssignedToUserIds || [];
+            this.assignedToCount = this.userIds.length;
+            this.addTaskForm.controls['UserDisplayIds'].setValue(
+              this.getUserLabel(this.assignedToCount)
+            );
+          }
+          this.toaster.success('User removed successfully');
+        });
     });
   }
 
   onSubmit() {
     if (this.addTaskForm.invalid) {
-      this.addTaskForm.markAllAsTouched(); 
+      this.addTaskForm.markAllAsTouched();
       return;
-    }  
+    }
     const controls = this.addTaskForm.controls;
-
-    if (this.selectedIndex === 1) {
-      controls['UserDisplayIds'].disable();
-      if (this.data.Action === 'Edit') this.taskService.loadSubject.next(true);
-    }
-
-    if (this.addTaskForm.invalid) {
-      Object.keys(controls).forEach((controlName) => controls[controlName].markAsTouched());
-      return;
-    }
 
     if (this.selectedIndex === 0) {
       controls['UserDisplayIds'].setValidators(Validators.required);
       controls['UserDisplayIds'].updateValueAndValidity();
       controls['UserIds'].setValue(this.userIds);
     } else if (this.selectedIndex === 1) {
+      controls['UserDisplayIds'].disable();
       this.userIds = [this.data.UserId];
       controls['UserIds'].setValue(this.userIds);
     }
@@ -364,21 +364,26 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
 
     this.viewLoading = true;
 
-    const taskRequest = this.data.Action === 'Edit'
-      ? this.taskService.updateTask(this.addTaskForm.value)
-      : this.taskService.addTask(this.addTaskForm.value);
+    const taskRequest =
+      this.data.Action === 'Edit'
+        ? this.taskService.updateTask(this.addTaskForm.value)
+        : this.taskService.addTask(this.addTaskForm.value);
 
-    taskRequest.pipe(map((res) => {
-      if (res.Status === 200) {
-        this.dialogRef.close({
-          res,
-          selectTab: this.selectedIndex,
-          isEdit: this.data.Action === 'Edit',
-        });
-        this.taskService.loadSubject.next(true);
-      }
-      this.viewLoading = false;
-    })).subscribe();
+    taskRequest
+      .pipe(
+        map((res) => {
+          if (res.Status === 200) {
+            this.dialogRef.close({
+              res,
+              selectTab: this.selectedIndex,
+              isEdit: this.data.Action === 'Edit',
+            });
+            this.taskService.loadSubject.next(true);
+          }
+          this.viewLoading = false;
+        })
+      )
+      .subscribe();
   }
 
   private getUserLabel(count: number): string {
@@ -387,7 +392,9 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
 
   canDeactivate(): boolean {
     if (this.addTaskForm.dirty) {
-      return confirm('You have unsaved form changes. Do you really want to leave?');
+      return confirm(
+        'You have unsaved form changes. Do you really want to leave?'
+      );
     }
     return true;
   }

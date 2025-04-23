@@ -26,8 +26,8 @@
                             <mat-form-field appearance="fill">
                                 <mat-label>Description</mat-label>
                                 <input matInput type="text" formControlName="Description" />
-                                <mat-error>
-                                    Description is required.
+                                <mat-error *ngIf="addTaskForm.get('Description')?.hasError('required')">
+                                    Description is required
                                 </mat-error>
                             </mat-form-field>
                         </div>
@@ -57,6 +57,9 @@
                                         {{lead.LeadName}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error *ngIf="addTaskForm.get('LeadId')?.hasError('required')">
+                                    Customer Name is required
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -78,6 +81,9 @@
                                     <mat-option value="High">High Priority</mat-option>
                                     <mat-option value="Low">Low Priority</mat-option>
                                 </mat-select>
+                                <mat-error *ngIf="addTaskForm.get('Priority')?.hasError('required')">
+                                    Priority is required
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -92,9 +98,7 @@
                                         Remove
                                     </div>
                                 </div>
-                                <mat-error>Users is
-                                    <strong>required</strong>
-                                </mat-error>
+                                <mat-error>Users is required.</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -109,6 +113,9 @@
                                         Remove
                                     </div>
                                 </div>
+                                <mat-error>
+                                    CC users are required
+                                </mat-error>
                             </mat-form-field>
                         </div>
                     </div>
@@ -128,7 +135,7 @@
                                 <mat-label>Title</mat-label>
                                 <input matInput type="text" formControlName="Title" />
                                 <mat-error *ngIf="addTaskForm.get('Title')?.hasError('required')">
-                                    Title is required.
+                                    Title is required
                                 </mat-error>
                                 <mat-error *ngIf="addTaskForm.get('Title')?.hasError('pattern')">
                                     Title contain only alphabets.
@@ -139,8 +146,8 @@
                             <mat-form-field appearance="fill">
                                 <mat-label>Description</mat-label>
                                 <input matInput type="text" formControlName="Description" />
-                                <mat-error>
-                                    Description is required.
+                                <mat-error *ngIf="addTaskForm.get('Description')?.hasError('required')">
+                                    Description is required
                                 </mat-error>
                             </mat-form-field>
                         </div>
@@ -170,6 +177,9 @@
                                         {{lead.LeadName}}
                                     </mat-option>
                                 </mat-select>
+                                <mat-error *ngIf="addTaskForm.get('LeadId')?.hasError('required')">
+                                    Customer Name is required
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -190,6 +200,9 @@
                                     <mat-option value="High">High Priority</mat-option>
                                     <mat-option value="Low">Low Priority</mat-option>
                                 </mat-select>
+                                <mat-error *ngIf="addTaskForm.get('Priority')?.hasError('required')">
+                                    Priority is required
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="col-md-6">
@@ -204,6 +217,9 @@
                                         Remove
                                     </div>
                                 </div>
+                                <mat-error>
+                                    CC users are required
+                                </mat-error>
                             </mat-form-field>
                         </div>
                     </div>
