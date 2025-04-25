@@ -4,10 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { map } from 'rxjs';
 
 @Component({
-    selector: 'app-add-users-dialog',
-    templateUrl: './add-users-dialog.component.html',
-    styleUrl: './add-users-dialog.component.scss',
-    standalone: false
+  selector: 'app-add-users-dialog',
+  templateUrl: './add-users-dialog.component.html',
+  styleUrl: './add-users-dialog.component.scss',
+  standalone: false,
 })
 export class AddUsersDialogComponent implements OnInit {
   memberList: any[] = [];
@@ -20,6 +20,8 @@ export class AddUsersDialogComponent implements OnInit {
   addRemove: boolean = false;
   totalRecords: number = 0;
   lastRowIndex: number = 0;
+  memberFilter: any[] = [];
+  searchText: string = '';
 
   constructor(
     private taskService: TaskService,
@@ -38,7 +40,7 @@ export class AddUsersDialogComponent implements OnInit {
       if (this.data.controlname === 'UserIds') {
         this.userIds = this.data.usersIds.map((id: number) => ({ UserId: id }));
       } else if (this.data.controlname === 'TaskOwners') {
-        this.userIds = [...this.data.usersIds]; 
+        this.userIds = [...this.data.usersIds];
       }
     }
     this.getMembersList(1, 100, '');
@@ -49,7 +51,8 @@ export class AddUsersDialogComponent implements OnInit {
       .getCompanyMembers(from, to, searchText)
       .pipe(
         map((res) => {
-          Array.prototype.push.apply(this.memberList, res.data.Members);
+          this.memberList = res.data.Members;
+          this.memberFilter = this.memberList;
           this.totalRecords = res.data.TotalRecords;
           this.lastRowIndex = this.memberList.length;
           this.viewLoading = false;
@@ -59,19 +62,12 @@ export class AddUsersDialogComponent implements OnInit {
       .subscribe();
   }
 
-  searchMember(searchValue: string): void {
-    this.viewLoading = true;
-    this.taskService
-      .getCompanyMembers(1, this.totalRecords, searchValue)
-      .pipe(
-        map((res) => {
-          this.memberList = res.data.Members || [];
-          this.noRecords = !this.memberList.length;
-          this.viewLoading = false;
-          this.markSelectedMembers();
-        })
-      )
-      .subscribe();
+  applyLocalSearch(): void {
+    const keyword = this.searchText.toLowerCase();
+    this.memberFilter = this.memberList.filter((member: any) =>
+      member.Name.toLowerCase().includes(keyword)
+    );
+    this.noRecords = this.memberFilter.length === 0;
   }
 
   checkedMember(event: any, userId: number, memberName: string): void {
