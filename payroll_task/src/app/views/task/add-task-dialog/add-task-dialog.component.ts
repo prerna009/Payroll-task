@@ -327,10 +327,6 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
   }
 
   onSubmit() {
-    if (this.addTaskForm.invalid) {
-      this.addTaskForm.markAllAsTouched();
-      return;
-    }
     const controls = this.addTaskForm.controls;
 
     if (this.selectedIndex === 0) {
@@ -338,10 +334,17 @@ export class AddTaskDialogComponent implements OnInit, CanComponentDeactivate {
       controls['UserDisplayIds'].updateValueAndValidity();
       controls['UserIds'].setValue(this.userIds);
     } else if (this.selectedIndex === 1) {
-      controls['UserDisplayIds'].disable();
+      controls['UserDisplayIds'].clearValidators();
+      controls['UserDisplayIds'].updateValueAndValidity();
       this.userIds = [this.data.UserId];
       controls['UserIds'].setValue(this.userIds);
     }
+
+    if (this.addTaskForm.invalid) {
+      this.addTaskForm.markAllAsTouched();
+      return;
+    }
+
     controls['TaskOwners'].setValue(this.taskOwners);
     controls['MultimediaExtension'].setValue(this.imageExt);
     controls['MultimediaFileName'].setValue(this.imageName);

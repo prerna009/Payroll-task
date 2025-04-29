@@ -1,7 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { environment } from '../../../environments/environment';
 import { catchError, tap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
