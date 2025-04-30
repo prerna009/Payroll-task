@@ -19,9 +19,10 @@ import { DatePipe } from '@angular/common';
 import { CUSTOM_DATE_FORMATS, CustomDateAdaptor } from './core/date-adaptor/custom-date-adaptor';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { loaderInterceptor } from './core/interceptors/loader.interceptor';
+import { NumbersOnlyDirective } from './core/directive/numbers-only.directive';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent],
+  declarations: [AppComponent, LoginComponent, NumbersOnlyDirective],
   imports: [
     BrowserModule,
     AppRoutingModule,
